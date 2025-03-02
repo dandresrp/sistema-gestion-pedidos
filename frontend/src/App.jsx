@@ -1,5 +1,5 @@
 import AppRouter from "./Router";
-import AuthProvider from "./provider/AuthProvider";
+import AuthProvider from "./provider/authProvider";
 
 function App() {
   return (
