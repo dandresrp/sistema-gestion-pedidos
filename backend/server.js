@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/usuarios", userRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor ejecutándose en: http://localhost:${port}`);

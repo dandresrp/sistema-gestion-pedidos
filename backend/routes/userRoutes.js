@@ -5,8 +5,8 @@ import * as userController from "../controllers/userController.js";
 const router = express.Router();
 
 router.get("/", authenticateJWT, userController.getAllUsers);
-router.get("/:id", authenticateJWT, userController.getUserById);
-router.put("/:id", authenticateJWT, userController.updateUser);
-router.delete("/:id", authenticateJWT, userController.deleteUser);
+router.get("/:id_usuario", authenticateJWT, userController.getUserById);
+router.put("/:id_usuario", authenticateJWT, userController.updateUser);
+router.delete("/:id_usuario", authenticateJWT, userController.deleteUser);
 
 export default router;

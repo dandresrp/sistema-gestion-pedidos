@@ -4,62 +4,70 @@ import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { nombre_usuario, contrasena, nombre, correo, rol } = req.body;
 
-        if (!username || !password) {
-            return res.status(400).json({ message: "Usuario y contraseña son requeridos" });
+        if (!nombre_usuario || !contrasena || !nombre || !correo || !rol) {
+            return res.status(400).json({ message: "Todos los campos son requeridos" });
         }
 
-        if (password.length < 6) {
-            return res.status(400).json({ message: "La contraseña debe tener al menos 6 caracteres" });
+        if (contrasena.length < 10) {
+            return res.status(400).json({ message: "La contraseña debe tener al menos 10 caracteres" });
         }
 
-        const existingUsers = await sql`
-      SELECT * FROM users WHERE username = ${username}
-    `;
+        await sql.begin(async (transaction) => {
+            const existingUsers = await transaction`
+                SELECT * FROM usuarios WHERE nombre_usuario = ${nombre_usuario}
+            `;
 
-        if (existingUsers.length > 0) {
-            return res.status(400).json({ message: "El usuario ya existe" });
-        }
+            if (existingUsers.length > 0) {
+                throw new Error("El usuario ya existe");
+            }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(contrasena, 10);
 
-        await sql`
-      INSERT INTO users (username, password)
-      VALUES (${username}, ${hashedPassword})
-    `;
+            const nextIdResult = await transaction`SELECT nextval('usuarios_id_usuario_seq')`;
+            const nextId = nextIdResult[0].nextval;
+
+            await transaction`
+                INSERT INTO usuarios (id_usuario, nombre, correo, contrasena, rol, nombre_usuario)
+                VALUES (${nextId}, ${nombre}, ${correo}, ${hashedPassword}, ${rol}, ${nombre_usuario})
+            `;
+        });
 
         res.status(201).json({ message: "Usuario registrado exitosamente" });
     } catch (error) {
         console.error("Error en el registro:", error);
+        if (error.message === "El usuario ya existe") {
+            return res.status(400).json({ message: "El usuario ya existe" });
+        }
         res.status(500).json({ message: "Error al registrar usuario" });
     }
 }
 
 export const signIn = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { nombre_usuario, contrasena } = req.body;
 
-        if (!username || !password) {
+        if (!nombre_usuario || !contrasena) {
             return res.status(400).json({ message: "Usuario y contraseña son requeridos" });
         }
 
-        const users = await sql`
-      SELECT * FROM users WHERE username = ${username}
+        const usuarios = await sql`
+      SELECT * FROM usuarios WHERE nombre_usuario = ${nombre_usuario}
     `;
 
-        if (users.length === 0) {
+        if (usuarios.length === 0) {
             return res.status(400).json({ message: "Usuario o contraseña incorrectos" });
         }
 
-        const user = users[0];
+        const usuario = usuarios[0];
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(contrasena, usuario.contrasena);
         if (!isPasswordValid) {
             return res.status(400).json({ message: "Usuario o contraseña incorrectos" });
         }
 
-        const token = jwt.sign({ username: user.username, userId: user.id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ nombre_usuario: usuario.nombre_usuario, id_usuario: usuario.id_usuario }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRES_IN,
         });
 

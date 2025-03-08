@@ -2,8 +2,8 @@ import sql from "../db.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await sql`SELECT id, username FROM users;`;
-    res.send(users);
+    const usuarios = await sql`SELECT id_usuario, nombre_usuario, nombre, correo, rol FROM usuarios;`;
+    res.send(usuarios);
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
     res.status(500).json({ message: "Error al obtener usuarios" });
@@ -12,14 +12,14 @@ export const getAllUsers = async (req, res) => {
 
 export const getUserById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const users = await sql`SELECT id, username FROM users WHERE id = ${id}`;
+        const { id_usuario } = req.params;
+        const usuarios = await sql`SELECT id_usuario, nombre_usuario FROM usuarios WHERE id_usuario = ${id_usuario}`;
 
-        if (users.length === 0) {
+        if (usuarios.length === 0) {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
 
-        res.json(users[0]);
+        res.json(usuarios[0]);
     } catch (error) {
         console.error("Error al obtener usuario:", error);
         res.status(500).json({ message: "Error al obtener datos del usuario" });
@@ -28,23 +28,23 @@ export const getUserById = async (req, res) => {
 
 export const updateUser = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { username } = req.body;
+        const { id_usuario } = req.params;
+        const { nombre_usuario } = req.body;
 
-        if (!username || username.trim() === '') {
-            return res.status(400).json({ message: "El nombre de usuario es requerido" });
+        if (!nombre_usuario || nombre_usuario.trim() === '') {
+            return res.status(400).json({ message: "El nombre de usuario es requerid_usuarioo" });
         }
 
-        const existingUser = await sql`SELECT * FROM users WHERE id = ${id}`;
+        const existingUser = await sql`SELECT * FROM usuarios WHERE id_usuario = ${id_usuario}`;
         if (existingUser.length === 0) {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
 
-        if (req.user.userId != id) {
+        if (req.usuario.id_usuario != id_usuario) {
             return res.status(403).json({ message: "No tienes permiso para modificar este usuario" });
         }
 
-        await sql`UPDATE users SET username = ${username} WHERE id = ${id}`;
+        await sql`UPDATE usuarios SET nombre_usuario = ${nombre_usuario} WHERE id_usuario = ${id_usuario}`;
 
         res.json({ message: "Usuario actualizado correctamente" });
     } catch (error) {
@@ -55,13 +55,13 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_usuario } = req.params;
 
-        if (req.user.userId != id) {
+        if (req.usuario.id_usuario != id_usuario) {
             return res.status(403).json({ message: "No tienes permiso para eliminar este usuario" });
         }
 
-        await sql`DELETE FROM users WHERE id = ${id}`;
+        await sql`DELETE FROM usuarios WHERE id_usuario = ${id_usuario}`;
 
         res.json({ message: "Usuario eliminado correctamente" });
     } catch (error) {
