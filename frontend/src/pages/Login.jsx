@@ -8,13 +8,24 @@ import { faEye, faEyeSlash, faUser } from "@fortawesome/free-regular-svg-icons";
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
-  const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
+  const [nombreUsuario, setNombreUsuario] = useState("");
+  const [contrasena, setContrasena] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    login(user, password);
+    setIsLoading(true);
+    setError("");
+    
+    try {
+      await login(nombreUsuario, contrasena);
+    } catch (error) {
+      setError(error.message || "Error al iniciar sesión");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -31,14 +42,16 @@ const Login = () => {
         <img src={logo} alt="Logo" className="logo" />
       </div>
       <div className="login-container">
+        {error && <div className="error-message">{error}</div>}
         <form className="login-form" onSubmit={handleLogin}>
           <div className="user-container">
             <input
               type="text"
               placeholder="Usuario"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
+              value={nombreUsuario}
+              onChange={(e) => setNombreUsuario(e.target.value)}
               required
+              disabled={isLoading}
             />
             <FontAwesomeIcon icon={faUser} className="user-icon" />
           </div>
@@ -46,9 +59,10 @@ const Login = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
               required
+              disabled={isLoading}
             />
             <FontAwesomeIcon
               icon={showPassword ? faEyeSlash : faEye}
@@ -56,7 +70,9 @@ const Login = () => {
               onClick={togglePasswordVisibility}
             />
           </div>
-          <button type="submit">Acceder</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Cargando..." : "Acceder"}
+          </button>
         </form>
       </div>
     </div>
