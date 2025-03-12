@@ -1,0 +1,13 @@
+.content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  overflow: scroll;
+  flex-direction: row;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.titulo {
+  flex: 1;
+}

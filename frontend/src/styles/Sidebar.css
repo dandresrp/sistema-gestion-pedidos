@@ -1,0 +1,88 @@
+.sidebar {
+  width: 60px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background: linear-gradient(to right, #2b5876, #4e4376);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: width 2s ease-in-out;
+}
+
+.sidebar.expanded {
+  width: 220px;
+}
+
+.user-info {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 80px;
+  font-size: 16px;
+  padding: 7px;
+}
+
+.avatar {
+  animation: none;
+  font-size: 24px;
+}
+
+.user-name {
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
+
+.menu {
+  justify-content: left;
+  justify-items: left;
+  align-items: left;
+  flex-grow: 1;
+}
+
+.menu-item {
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  padding: 10px;
+  width: 200px;
+  text-decoration: none;
+  color: white;
+}
+
+.menu-item:hover {
+  background-color: rgb(94 144 210 / 50%);
+  border-radius: 9px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+
+.menu-icon {
+  font-size: 18px;
+  width: 20px;
+}
+
+.menu-text.expanded {
+  display: block;
+  animation: fade 6s ease;
+  margin-left: 10px;
+}
+
+.menu-text {
+  display: none;
+  animation: fade 6s ease;
+}
+
+.logout {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.logout-item {
+  color: #fff;
+}

@@ -1,13 +1,14 @@
 import React from "react";
+import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
   return (
-    <div className="welcome-container">
-      <h1>Bienvenido a nuestra aplicación</h1>
-      <p>
-        Nos alegra tenerte aquí. Explora las funcionalidades y disfruta de la
-        experiencia.
-      </p>
+    <div className="content">
+      <Sidebar />
+      <div className="titulo">
+        <h1>Dashboard</h1>
+        <p>Este es el dashboard</p>
+      </div>
     </div>
   );
 };
