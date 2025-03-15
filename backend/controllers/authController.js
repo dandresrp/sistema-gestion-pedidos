@@ -67,7 +67,7 @@ export const signIn = async (req, res) => {
             return res.status(400).json({ message: "Usuario o contraseña incorrectos" });
         }
 
-        const token = jwt.sign({ nombre_usuario: usuario.nombre_usuario, id_usuario: usuario.id_usuario }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ nombre_usuario: usuario.nombre_usuario, id_usuario: usuario.id_usuario, rol: usuario.rol }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRES_IN,
         });
 
