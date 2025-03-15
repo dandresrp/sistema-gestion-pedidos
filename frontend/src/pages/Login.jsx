@@ -8,24 +8,13 @@ import { faEye, faEyeSlash, faUser } from "@fortawesome/free-regular-svg-icons";
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
-  const [nombreUsuario, setNombreUsuario] = useState("");
-  const [contrasena, setContrasena] = useState("");
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-    
-    try {
-      await login(nombreUsuario, contrasena);
-    } catch (error) {
-      setError(error.message || "Error al iniciar sesión");
-    } finally {
-      setIsLoading(false);
-    }
+    login(user, password);
   };
 
   const togglePasswordVisibility = () => {
@@ -37,7 +26,6 @@ const Login = () => {
   }
 
   return (
-
     <div className="login-page">
       <div className="container">
         <div className="left-section">

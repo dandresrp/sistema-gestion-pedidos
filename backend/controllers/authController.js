@@ -71,12 +71,7 @@ export const signIn = async (req, res) => {
             expiresIn: process.env.JWT_EXPIRES_IN,
         });
 
-        res.json({ 
-            message: "Inicio de sesión exitoso",
-            token,
-            id_usuario: usuario.id_usuario,
-         });
-         
+        res.json({ message: "Inicio de sesión exitoso", token });
     } catch (error) {
         console.error("Error en el inicio de sesión:", error);
         res.status(500).json({ message: "Error al iniciar sesión" });
