@@ -8,6 +8,9 @@ import {
 import useAuth from "./contexts/useAuth";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Orders from "./pages/Orders";
+import Reports from "./pages/Reports";
+import Inventory from "./pages/Inventory";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, loading } = useAuth();
@@ -30,9 +33,11 @@ const AppRouter = () => {
         <Route path="/" element={<ProtectedRoute />}>
           <Route index element={<Navigate to="dashboard" />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="pedidos" element={<Orders />} />
+          <Route path="reportes" element={<Reports />} />
+          <Route path="inventario" element={<Inventory />} />
         </Route>
         <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );

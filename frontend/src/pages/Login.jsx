@@ -37,43 +37,41 @@ const Login = () => {
   }
 
   return (
-    <div className="container">
-      <div className="left-section">
-        <img src={logo} alt="Logo" className="logo" />
-      </div>
-      <div className="login-container">
-        {error && <div className="error-message">{error}</div>}
-        <form className="login-form" onSubmit={handleLogin}>
-          <div className="user-container">
-            <input
-              type="text"
-              placeholder="Usuario"
-              value={nombreUsuario}
-              onChange={(e) => setNombreUsuario(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-            <FontAwesomeIcon icon={faUser} className="user-icon" />
-          </div>
-          <div className="password-container">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Contraseña"
-              value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-            <FontAwesomeIcon
-              icon={showPassword ? faEyeSlash : faEye}
-              className="password-icon"
-              onClick={togglePasswordVisibility}
-            />
-          </div>
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Cargando..." : "Acceder"}
-          </button>
-        </form>
+
+    <div className="login-page">
+      <div className="container">
+        <div className="left-section">
+          <img src={logo} alt="Logo" className="logo" />
+        </div>
+        <div className="login-container">
+          <form className="login-form" onSubmit={handleLogin}>
+            <div className="user-container">
+              <input
+                type="text"
+                placeholder="Usuario"
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+                required
+              />
+              <FontAwesomeIcon icon={faUser} className="user-icon" />
+            </div>
+            <div className="password-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                className="password-icon"
+                onClick={togglePasswordVisibility}
+              />
+            </div>
+            <button type="submit">Acceder</button>
+          </form>
+        </div>
       </div>
     </div>
   );

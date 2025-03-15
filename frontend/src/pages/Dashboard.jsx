@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import userService from "../services/userService";
-import useAuth from "../contexts/useAuth";
+
+import React from "react";
+import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
   const { user, token, logout } = useAuth();
@@ -33,15 +33,12 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="welcome-container">
-      <h1>Bienvenido a nuestra aplicación</h1>
-      {userData && (
-        <p>
-          ¡Hola, {userData.nombre_usuario}! Nos alegra tenerte aquí. Explora las funcionalidades y disfruta de la
-          experiencia.
-        </p>
-      )}
-      <button onClick={logout}>Cerrar sesión</button>
+    <div className="content">
+      <Sidebar />
+      <div className="titulo">
+        <h1>Dashboard</h1>
+        <p>Este es el dashboard</p>
+      </div>
     </div>
   );
 };
