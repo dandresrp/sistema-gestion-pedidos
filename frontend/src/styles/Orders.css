@@ -1,0 +1,13 @@
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin-left: 60px;
+  transition: margin-left 1s ease-in-out;
+  padding: 20px;
+}
+
+.sidebar.expanded + .content {
+  margin-left: 220px;
+}

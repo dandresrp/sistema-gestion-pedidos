@@ -1,5 +1,4 @@
-import { useState } from "react";
-// import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import "../styles/Sidebar.css";
 import {
   LiaHomeSolid,
@@ -9,69 +8,157 @@ import {
   LiaSignOutAltSolid,
   LiaUserCircleSolid,
 } from "react-icons/lia";
+import { Link, useNavigate } from "react-router-dom";
+import generateReportData from "../provider/reportsProvider";
 
-const Sidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const Sidebar = ({
+  setReportData,
+  setTitle,
+  sidebarExpanded,
+  setSidebarExpanded,
+}) => {
+  const [isReportesOpen, setIsReportesOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const reportFetchers = {
+    "completed-orders": () => generateReportData(1097),
+    reporte2: generateReportData(50),
+  };
+
+  const reportTitles = {
+    "completed-orders": `PEDIDOS REALIZADOS EL MES DE ${
+      new Date().getMonth() + 1
+    }`,
+    reporte2: generateReportData(50),
+  };
+
+  const handleMouseEnter = () => {
+    setSidebarExpanded(true);
+  };
+
+  const handleMouseLeave = () => {
+    setSidebarExpanded(false);
+  };
+
+  useEffect(() => {
+    if (!sidebarExpanded) {
+      setIsReportesOpen(false);
+    }
+  }, [sidebarExpanded]);
+
+  const handleReportClick = async (reportName) => {
+    const fetchFunction = reportFetchers[reportName];
+    if (fetchFunction) {
+      const data = await fetchFunction();
+      setReportData(data);
+      setTitle(reportTitles[reportName]);
+    }
+    navigate(`/reports/${reportName}`);
+  };
 
   return (
     <div
-      className={isExpanded ? "sidebar expanded" : "sidebar"}
-      onMouseEnter={() => {
-        setIsExpanded(true);
-      }}
-      onMouseLeave={() => {
-        setIsExpanded(false);
-      }}
+      className={sidebarExpanded ? "sidebar expanded" : "sidebar"}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Icono de usuario y nombre */}
       <div className="user-info">
         <div className="avatar">
           <LiaUserCircleSolid />
         </div>
-        {isExpanded && <span className="user-name">Usuario</span>}
+        <span className={sidebarExpanded ? "user-name expanded" : "user-name"}>
+          Usuario
+        </span>
       </div>
+
       {/* Menú */}
       <nav className="menu">
-        <a href={"/dashboard"} className="menu-item">
+        <Link to={"/home"} className="menu-item">
           <div className="menu-icon">
             <LiaHomeSolid />
           </div>
-          <span className={isExpanded ? "menu-text expanded" : "menu-text"}>
+          <span
+            className={sidebarExpanded ? "menu-text expanded" : "menu-text"}
+          >
             {"Inicio"}
           </span>
-        </a>
-        <a href={"/pedidos"} className="menu-item">
+        </Link>
+        <Link to={"/orders"} className="menu-item">
           <div className="menu-icon">
             <LiaClipboardListSolid />
           </div>
-          <span className={isExpanded ? "menu-text expanded" : "menu-text"}>
+          <span
+            className={sidebarExpanded ? "menu-text expanded" : "menu-text"}
+          >
             {"Pedidos"}
           </span>
-        </a>
-        <a href={"/inventario"} className="menu-item">
+        </Link>
+        <Link to={"/inventory"} className="menu-item">
           <div className="menu-icon">
             <LiaBoxesSolid />
           </div>
-          <span className={isExpanded ? "menu-text expanded" : "menu-text"}>
+          <span
+            className={sidebarExpanded ? "menu-text expanded" : "menu-text"}
+          >
             {"Inventario"}
           </span>
-        </a>
-        <a href={"/reportes"} className="menu-item">
+        </Link>
+        <div
+          className="menu-item reportes"
+          onClick={() => setIsReportesOpen(!isReportesOpen)}
+        >
           <div className="menu-icon">
             <LiaChartBarSolid />
           </div>
-          <span className={isExpanded ? "menu-text expanded" : "menu-text"}>
+          <span
+            className={sidebarExpanded ? "menu-text expanded" : "menu-text"}
+          >
             {"Reportes"}
           </span>
-        </a>
+        </div>
+        {sidebarExpanded && (
+          <div className={`submenu ${isReportesOpen ? "open" : ""}`}>
+            <Link
+              onClick={() => handleReportClick("completed-orders")}
+              className="submenu-item"
+            >
+              Pedidos realizados (mes)
+            </Link>
+            <Link href="/reports/2" className="submenu-item">
+              Reporte 2
+            </Link>
+            <Link href="/reports/2" className="submenu-item">
+              Reporte 3
+            </Link>
+            <Link href="/reports/2" className="submenu-item">
+              Reporte 4
+            </Link>
+            <Link href="/reports/2" className="submenu-item">
+              Reporte 5
+            </Link>
+            <Link href="/reports/2" className="submenu-item">
+              Reporte 6
+            </Link>
+            <Link href="/reports/2" className="submenu-item">
+              Reporte 7
+            </Link>
+            <Link href="/reports/2" className="submenu-item">
+              Reporte 8
+            </Link>
+          </div>
+        )}
       </nav>
+
       {/* Cerrar sesión */}
       <div className="logout">
         <a href="/logout" className="menu-item logout-item">
           <div className="menu-icon">
             <LiaSignOutAltSolid />
           </div>
-          <span className={isExpanded ? "menu-text expanded" : "menu-text"}>
+          <span
+            className={sidebarExpanded ? "menu-text expanded" : "menu-text"}
+          >
             SALIR
           </span>
         </a>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,10 +8,11 @@ import {
 } from "react-router-dom";
 import useAuth from "./contexts/useAuth";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Orders from "./pages/Orders";
-import Reports from "./pages/Reports";
-import Inventory from "./pages/Inventory";
+import Home from "./pages/Home";
+import Dashboard from "./pages/subpages/Dashboard";
+import Orders from "./pages/subpages/Orders";
+import Reports from "./pages/subpages/Reports";
+import Inventory from "./pages/subpages/Inventory";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, loading } = useAuth();
@@ -27,15 +29,30 @@ const ProtectedRoute = () => {
 };
 
 const AppRouter = () => {
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<ProtectedRoute />}>
-          <Route index element={<Navigate to="dashboard" />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="pedidos" element={<Orders />} />
-          <Route path="reportes" element={<Reports />} />
-          <Route path="inventario" element={<Inventory />} />
+          <Route
+            element={
+              <Home
+                sidebarExpanded={sidebarExpanded}
+                setSidebarExpanded={setSidebarExpanded}
+              />
+            }
+          >
+            <Route index element={<Navigate to="home" />} />
+            <Route path="home" element={<Dashboard />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="reports">
+              <Route path="completed-orders" element={<Reports />} />
+              <Route path="reporte2" element={<Reports />} />
+              <Route path="reporte3" element={<Reports />} />
+            </Route>
+            <Route path="inventory" element={<Inventory />} />
+          </Route>
         </Route>
         <Route path="/login" element={<Login />} />
       </Routes>
