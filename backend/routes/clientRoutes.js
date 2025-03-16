@@ -1,8 +1,8 @@
-import express from 'express'
-import { authenticateJWT, authorizeAdmin } from '../middlewares/auth.js'
-import * as clientController from '../controllers/clientController.js'
+import express from 'express';
+import { authenticateJWT, authorizeAdmin } from '../middlewares/auth.js';
+import * as clientController from '../controllers/clientController.js';
 
-const router = express.Router()
+const router = express.Router();
 
 /**
  * @swagger
@@ -20,7 +20,7 @@ const router = express.Router()
  *       500:
  *         description: Error del servidor
  */
-router.get('/', authenticateJWT, clientController.getAllClients)
+router.get('/', authenticateJWT, clientController.getAllClients);
 
 /**
  * @swagger
@@ -45,9 +45,9 @@ router.get('/', authenticateJWT, clientController.getAllClients)
  *       500:
  *         description: Error del servidor
  */
-router.get('/:id_cliente', authenticateJWT, clientController.getClientById)
+router.get('/:id_cliente', authenticateJWT, clientController.getClientById);
 
-/** 
+/**
  * @swagger
  * /api/clientes:
  *   post:
@@ -81,7 +81,7 @@ router.get('/:id_cliente', authenticateJWT, clientController.getClientById)
  *       500:
  *         description: Error del servidor
  */
-router.post('/', [authenticateJWT, authorizeAdmin], clientController.addClient)
+router.post('/', [authenticateJWT, authorizeAdmin], clientController.addClient);
 
 /**
  * @swagger
@@ -124,7 +124,11 @@ router.post('/', [authenticateJWT, authorizeAdmin], clientController.addClient)
  *       404:
  *         description: Cliente no encontrado
  */
-router.put('/:id_cliente', [authenticateJWT, authorizeAdmin], clientController.updateClient)
+router.put(
+  '/:id_cliente',
+  [authenticateJWT, authorizeAdmin],
+  clientController.updateClient,
+);
 
 /**
  * @swagger
@@ -149,6 +153,10 @@ router.put('/:id_cliente', [authenticateJWT, authorizeAdmin], clientController.u
  *       404:
  *         description: Cliente no encontrado
  */
-router.delete('/:id_cliente',[authenticateJWT, authorizeAdmin], clientController.deleteClient)
+router.delete(
+  '/:id_cliente',
+  [authenticateJWT, authorizeAdmin],
+  clientController.deleteClient,
+);
 
-export default router
+export default router;

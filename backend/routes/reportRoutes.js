@@ -17,7 +17,6 @@ const router = express.Router();
  *         description: El mes por el que se filtraran las ordenes (1-12).
  *         schema:
  *           type: integer
- *           example: 5 (Mayo)
  *     security:
  *       - bearerAuth: []
  *     responses:
