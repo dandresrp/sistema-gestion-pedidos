@@ -69,6 +69,8 @@ router.get('/:id_cliente', authenticateJWT, clientController.getClientById)
  *             required:
  *               - name
  *               - email
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: Cliente creado
