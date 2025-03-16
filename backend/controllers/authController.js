@@ -1,4 +1,4 @@
-import sql from '../db.js';
+import { query, pool } from '../db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -18,28 +18,42 @@ export const signUp = async (req, res) => {
       });
     }
 
-    await sql.begin(async transaction => {
-      const existingUsers = await transaction`
-                SELECT * FROM usuarios WHERE nombre_usuario = ${nombre_usuario}
-            `;
+    // Use a client for transaction management
+    const client = await pool.connect();
 
-      if (existingUsers.length > 0) {
+    try {
+      await client.query('BEGIN');
+
+      // Check if user exists
+      const existingUsersResult = await client.query(
+        'SELECT * FROM usuarios WHERE nombre_usuario = $1',
+        [nombre_usuario],
+      );
+
+      if (existingUsersResult.rows.length > 0) {
         throw new Error('El usuario ya existe');
       }
 
       const hashedPassword = await bcrypt.hash(contrasena, 10);
 
-      const nextIdResult =
-        await transaction`SELECT nextval('usuarios_id_usuario_seq')`;
-      const nextId = nextIdResult[0].nextval;
+      const nextIdResult = await client.query(
+        "SELECT nextval('usuarios_id_usuario_seq')",
+      );
+      const nextId = nextIdResult.rows[0].nextval;
 
-      await transaction`
-                INSERT INTO usuarios (id_usuario, nombre, correo, contrasena, rol, nombre_usuario)
-                VALUES (${nextId}, ${nombre}, ${correo}, ${hashedPassword}, ${rol}, ${nombre_usuario})
-            `;
-    });
+      await client.query(
+        'INSERT INTO usuarios (id_usuario, nombre, correo, contrasena, rol, nombre_usuario) VALUES ($1, $2, $3, $4, $5, $6)',
+        [nextId, nombre, correo, hashedPassword, rol, nombre_usuario],
+      );
 
-    res.status(201).json({ message: 'Usuario registrado exitosamente' });
+      await client.query('COMMIT');
+      res.status(201).json({ message: 'Usuario registrado exitosamente' });
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   } catch (error) {
     console.error('Error en el registro:', error);
     if (error.message === 'El usuario ya existe') {
@@ -59,9 +73,11 @@ export const signIn = async (req, res) => {
         .json({ message: 'Usuario y contraseña son requeridos' });
     }
 
-    const usuarios = await sql`
-      SELECT * FROM usuarios WHERE nombre_usuario = ${nombre_usuario}
-    `;
+    const result = await query(
+      'SELECT * FROM usuarios WHERE nombre_usuario = $1',
+      [nombre_usuario],
+    );
+    const usuarios = result.rows;
 
     if (usuarios.length === 0) {
       return res
@@ -99,12 +115,14 @@ export const signIn = async (req, res) => {
       { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN },
     );
 
-    await sql`
-            INSERT INTO refresh_tokens (token, user_id, expires_at)
-            VALUES (${refreshToken}, ${usuario.id_usuario}, ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)})
-            ON CONFLICT (user_id) DO UPDATE
-            SET token = ${refreshToken}, expires_at = ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)}
-        `;
+    await query(
+      'INSERT INTO refresh_tokens (token, user_id, expires_at) VALUES ($1, $2, $3) ON CONFLICT (user_id) DO UPDATE SET token = $1, expires_at = $3',
+      [
+        refreshToken,
+        usuario.id_usuario,
+        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      ],
+    );
 
     res.json({
       message: 'Inicio de sesión exitoso',
@@ -128,12 +146,11 @@ export const refreshToken = async (req, res) => {
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
-    const tokens = await sql`
-          SELECT * FROM refresh_tokens
-          WHERE token = ${refreshToken}
-          AND user_id = ${decoded.id_usuario}
-          AND expires_at > NOW()
-      `;
+    const tokensResult = await query(
+      'SELECT * FROM refresh_tokens WHERE token = $1 AND user_id = $2 AND expires_at > NOW()',
+      [refreshToken, decoded.id_usuario],
+    );
+    const tokens = tokensResult.rows;
 
     if (tokens.length === 0) {
       return res
@@ -141,9 +158,11 @@ export const refreshToken = async (req, res) => {
         .json({ message: 'Refresh token inválido o expirado' });
     }
 
-    const usuarios = await sql`
-          SELECT * FROM usuarios WHERE id_usuario = ${decoded.id_usuario}
-      `;
+    const usuariosResult = await query(
+      'SELECT * FROM usuarios WHERE id_usuario = $1',
+      [decoded.id_usuario],
+    );
+    const usuarios = usuariosResult.rows;
 
     if (usuarios.length === 0) {
       return res.status(401).json({ message: 'Usuario no encontrado' });

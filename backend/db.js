@@ -1,9 +1,13 @@
-import dotenv from "dotenv";
-import postgres from "postgres";
+import dotenv from 'dotenv';
+import pg from 'pg';
 
 dotenv.config();
-
 const connectionString = process.env.DATABASE_URL;
-const sql = postgres(connectionString);
 
-export default sql;
+const { Pool } = pg;
+const pool = new Pool({
+  connectionString,
+});
+
+export const query = (text, params) => pool.query(text, params);
+export { pool };
