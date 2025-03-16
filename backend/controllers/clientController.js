@@ -5,10 +5,10 @@ export const getAllClients = async (req, res) => {
     const result = await query(
       'SELECT id_cliente, nombre, telefono, correo, direccion FROM clientes',
     );
-    res.send(result.rows);
+    res.success(result.rows);
   } catch (error) {
     console.error('Error al obtener clientes: ', error);
-    res.status(500).json({ message: 'Error al obtener clientes' });
+    res.error('Error al obtener clientes');
   }
 };
 
@@ -21,13 +21,13 @@ export const getClientById = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
+      return res.error('Cliente no encontrado', 404);
     }
 
-    res.json(result.rows[0]);
+    res.success(result.rows[0]);
   } catch (error) {
     console.error('Error al obtener este Cliente', error);
-    res.status(500).json({ message: 'Error al obtener datos de este cliente' });
+    res.error('Error al obtener datos de este cliente');
   }
 };
 
@@ -62,9 +62,7 @@ export const updateClient = async (req, res) => {
     }
 
     if (updates.length === 0) {
-      return res
-        .status(400)
-        .json({ message: 'No se enviaron datos para actualizar' });
+      return res.error('No se proporcionaron datos para actualizar', 400);
     }
 
     values.push(id_cliente);
@@ -75,16 +73,13 @@ export const updateClient = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
+      return res.error('Cliente no encontrado', 404);
     }
 
-    res.json({
-      message: 'Cliente actualizado correctamente',
-      cliente: result.rows[0],
-    });
+    res.success(result.rows[0], 'Cliente actualizado correctamente');
   } catch (error) {
-    console.error('Error al actualizar el cliente', error);
-    res.status(500).json({ message: 'Error al actualizar el cliente' });
+    console.error('Error al actualizar cliente:', error);
+    res.error('Error al actualizar cliente:');
   }
 };
 
@@ -98,16 +93,13 @@ export const deleteClient = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
+      return res.error('Cliente no encontrado', 404);
     }
 
-    res.status(200).json({
-      message: 'Cliente eliminado correctamente:',
-      cliente: result.rows[0],
-    });
+    res.success(result.rows[0], 'Cliente eliminado correctamente');
   } catch (error) {
-    console.error('Error al eliminar cliente', error);
-    res.status(500).json({ message: 'Error al eliminar cliente' });
+    console.error('Error al eliminar cliente:', error);
+    res.error('Error al eliminar cliente:');
   }
 };
 
@@ -121,9 +113,7 @@ export const addClient = async (req, res) => {
     );
 
     if (existingPhone.rows.length > 0) {
-      return res
-        .status(400)
-        .json({ message: 'Ya existe un cliente con ese teléfono' });
+      return res.error('El teléfono ya está registrado', 400);
     }
 
     const result = await query(
@@ -131,14 +121,9 @@ export const addClient = async (req, res) => {
       [nombre, telefono, correo, direccion],
     );
 
-    res
-      .status(201)
-      .json({
-        message: 'Cliente agregado correctamente',
-        cliente: result.rows[0],
-      });
+    res.success(result.rows[0], 'Cliente agregado correctamente', 201);
   } catch (error) {
-    console.error('Error al agregar el cliente', error);
-    res.status(500).json({ message: 'Error al agregar el cliente' });
+    console.log('Error al agregar cliente:', error);
+    res.error('Error al agregar cliente');
   }
 };

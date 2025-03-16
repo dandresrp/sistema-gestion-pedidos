@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { response } from 'express';
 import cors from 'cors';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import clientRoutes from './routes/clientRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import { responseHandler } from './middlewares/responseHandler.js';
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 app.use(express.json());
 app.use(cors());
+app.use(responseHandler);
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

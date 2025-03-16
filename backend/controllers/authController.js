@@ -7,31 +7,25 @@ export const signUp = async (req, res) => {
     const { nombre_usuario, contrasena, nombre, correo, rol } = req.body;
 
     if (!nombre_usuario || !contrasena || !nombre || !correo || !rol) {
-      return res
-        .status(400)
-        .json({ message: 'Todos los campos son requeridos' });
+      return res.error('Todos los campos son requeridos', 400);
     }
 
     if (contrasena.length < 10) {
-      return res.status(400).json({
-        message: 'La contraseña debe tener al menos 10 caracteres',
-      });
+      return res.error('La contraseña debe tener al menos 10 caracteres', 400);
     }
 
-    // Use a client for transaction management
     const client = await pool.connect();
 
     try {
       await client.query('BEGIN');
 
-      // Check if user exists
       const existingUsersResult = await client.query(
         'SELECT * FROM usuarios WHERE nombre_usuario = $1',
         [nombre_usuario],
       );
 
       if (existingUsersResult.rows.length > 0) {
-        throw new Error('El usuario ya existe');
+        res.error('El usuario ya existe');
       }
 
       const hashedPassword = await bcrypt.hash(contrasena, 10);
@@ -47,7 +41,7 @@ export const signUp = async (req, res) => {
       );
 
       await client.query('COMMIT');
-      res.status(201).json({ message: 'Usuario registrado exitosamente' });
+      res.success('Usuario registrado exitosamente', 201);
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
@@ -55,11 +49,12 @@ export const signUp = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('Error en el registro:', error);
     if (error.message === 'El usuario ya existe') {
-      return res.status(400).json({ message: 'El usuario ya existe' });
+      return res.error('El nombre de usuario ya está registrado', 400);
     }
-    res.status(500).json({ message: 'Error al registrar usuario' });
+    res.error(
+      'Error al registrar el usuario. Por favor, inténtelo de nuevo más tarde.',
+    );
   }
 };
 
@@ -68,9 +63,7 @@ export const signIn = async (req, res) => {
     const { nombre_usuario, contrasena } = req.body;
 
     if (!nombre_usuario || !contrasena) {
-      return res
-        .status(400)
-        .json({ message: 'Usuario y contraseña son requeridos' });
+      return res.error('Usuario y contraseña son requeridos', 400);
     }
 
     const result = await query(
@@ -80,9 +73,7 @@ export const signIn = async (req, res) => {
     const usuarios = result.rows;
 
     if (usuarios.length === 0) {
-      return res
-        .status(400)
-        .json({ message: 'Usuario o contraseña incorrectos' });
+      return res.error('Usuario o contraseña incorrectos', 400);
     }
 
     const usuario = usuarios[0];
@@ -92,9 +83,7 @@ export const signIn = async (req, res) => {
       usuario.contrasena,
     );
     if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ message: 'Usuario o contraseña incorrectos' });
+      return res.error('Usuario o contraseña incorrectos', 400);
     }
 
     const token = jwt.sign(
@@ -124,15 +113,13 @@ export const signIn = async (req, res) => {
       ],
     );
 
-    res.json({
-      message: 'Inicio de sesión exitoso',
+    res.success({
       token,
       refreshToken,
       id_usuario: usuario.id_usuario,
     });
   } catch (error) {
-    console.error('Error en el inicio de sesión:', error);
-    res.status(500).json({ message: 'Error al iniciar sesión' });
+    res.error('Error al iniciar sesión');
   }
 };
 
@@ -141,7 +128,7 @@ export const refreshToken = async (req, res) => {
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
-      return res.status(400).json({ message: 'Refresh token es requerido' });
+      return res.error('Refresh token es requerido', 400);
     }
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
@@ -153,9 +140,7 @@ export const refreshToken = async (req, res) => {
     const tokens = tokensResult.rows;
 
     if (tokens.length === 0) {
-      return res
-        .status(401)
-        .json({ message: 'Refresh token inválido o expirado' });
+      return res.error('Refresh token inválido o expirado', 401);
     }
 
     const usuariosResult = await query(
@@ -165,7 +150,7 @@ export const refreshToken = async (req, res) => {
     const usuarios = usuariosResult.rows;
 
     if (usuarios.length === 0) {
-      return res.status(401).json({ message: 'Usuario no encontrado' });
+      return res.error('Usuario no encontrado', 404);
     }
 
     const usuario = usuarios[0];
@@ -180,12 +165,11 @@ export const refreshToken = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN },
     );
 
-    res.json({
+    res.success({
       message: 'Token actualizado exitosamente',
       token: newToken,
     });
   } catch (error) {
-    console.error('Error al refrescar token:', error);
-    res.status(401).json({ message: 'Error al refrescar token' });
+    res.error('Error al refrescar token', 401);
   }
 };

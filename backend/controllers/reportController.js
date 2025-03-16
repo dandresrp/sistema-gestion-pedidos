@@ -19,9 +19,9 @@ export const getOrdersByMonth = async (req, res) => {
       WHERE EXTRACT(MONTH FROM p.fecha_creacion) = $1
     `;
     const result = await query(SQL_GET_ORDERS_BY_MONTH, [month]);
-    res.json(result.rows);
+    res.success(result.rows);
   } catch (error) {
     console.error('Error fetching orders by month:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.error('Error al obtener pedidos por mes');
   }
 };
