@@ -8,10 +8,11 @@
   color: white;
   display: flex;
   flex-direction: column;
+
   padding: 10px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  transition: width 2s ease-in-out;
+  transition: width 0.6s ease-in-out;
 }
 
 .sidebar.expanded {
@@ -26,16 +27,26 @@
   width: 80px;
   font-size: 16px;
   padding: 7px;
+  margin-left: 6px;
 }
 
 .avatar {
-  animation: none;
-  font-size: 24px;
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+  line-height: 1;
 }
 
 .user-name {
-  margin-bottom: 5px;
   margin-left: 10px;
+  opacity: 0;
+  transition: 1s ease-in-out;
+}
+
+.user-name.expanded {
+  margin-left: 10px;
+  opacity: 1;
+  transition: 1s ease-in-out;
 }
 
 .menu {
@@ -46,6 +57,7 @@
 }
 
 .menu-item {
+  margin-left: 6px;
   margin-bottom: 10px;
   cursor: pointer;
   display: flex;
@@ -53,6 +65,7 @@
   width: 200px;
   text-decoration: none;
   color: white;
+  align-items: center;
 }
 
 .menu-item:hover {
@@ -63,19 +76,21 @@
 }
 
 .menu-icon {
-  font-size: 18px;
-  width: 20px;
+  font-size: 25px;
+  width: 25px;
+  height: 25px;
+  line-height: 1;
 }
 
 .menu-text.expanded {
-  display: block;
-  animation: fade 6s ease;
+  transition: 1s ease-in-out;
   margin-left: 10px;
+  opacity: 1;
 }
 
 .menu-text {
-  display: none;
-  animation: fade 6s ease;
+  transition: 1s ease-in-out;
+  opacity: 0;
 }
 
 .logout {
@@ -85,4 +100,29 @@
 
 .logout-item {
   color: #fff;
+}
+
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+  padding-left: 40px;
+}
+
+.submenu.open {
+  max-height: 350px;
+}
+
+.submenu-item {
+  padding: 7px;
+  display: block;
+  color: white;
+  text-decoration: none;
+}
+
+.submenu-item:hover {
+  background-color: rgb(94 144 210 / 50%);
+  color: #fff;
+  border-radius: 9px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
