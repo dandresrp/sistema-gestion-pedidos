@@ -7,12 +7,13 @@ export const authService = {
       contrasena,
     });
     if (response.success) {
-      sessionStorage.setItem("token", response.data.token);
-      sessionStorage.setItem("refreshToken", response.data.refreshToken);
-      sessionStorage.setItem(
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("refreshToken", response.data.refreshToken);
+      localStorage.setItem(
         "user",
         JSON.stringify({
           id_usuario: response.data.id_usuario,
+          nombre_usuario,
         })
       );
     }
@@ -28,14 +29,14 @@ export const authService = {
       refreshToken,
     });
     if (response.success) {
-      sessionStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", response.data.token);
     }
     return response;
   },
 
   logout: () => {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("refreshToken");
-    sessionStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
   },
 };

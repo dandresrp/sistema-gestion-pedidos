@@ -7,14 +7,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash, faUser } from "@fortawesome/free-regular-svg-icons";
 
 const Login = () => {
-  const { login, isAuthenticated } = useAuth();
-  const [user, setUser] = useState("");
+  const { login, isAuthenticated, error } = useAuth();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    login(user, password);
+    setIsLoading(true);
+    await login(username, password);
+    setIsLoading(false);
   };
 
   const togglePasswordVisibility = () => {
@@ -33,12 +36,13 @@ const Login = () => {
         </div>
         <div className="login-container">
           <form className="login-form" onSubmit={handleLogin}>
+            {error && <div className="error-message">{error}</div>}
             <div className="user-container">
               <input
                 type="text"
                 placeholder="Usuario"
-                value={user}
-                onChange={(e) => setUser(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
               <FontAwesomeIcon icon={faUser} className="user-icon" />
@@ -57,7 +61,9 @@ const Login = () => {
                 onClick={togglePasswordVisibility}
               />
             </div>
-            <button type="submit">Acceder</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Cargando..." : "Acceder"}
+            </button>
           </form>
         </div>
       </div>

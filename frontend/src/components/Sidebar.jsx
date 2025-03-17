@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useAuth from "../contexts/useAuth";
 import "../styles/Sidebar.css";
 import {
   LiaHomeSolid,
@@ -17,6 +18,7 @@ const Sidebar = ({
   sidebarExpanded,
   setSidebarExpanded,
 }) => {
+  const { logout } = useAuth();
   const [isReportesOpen, setIsReportesOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -38,6 +40,11 @@ const Sidebar = ({
 
   const handleMouseLeave = () => {
     setSidebarExpanded(false);
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
   };
 
   useEffect(() => {
@@ -152,7 +159,7 @@ const Sidebar = ({
 
       {/* Cerrar sesión */}
       <div className="logout">
-        <a href="/logout" className="menu-item logout-item">
+        <a onClick={handleLogout} className="menu-item logout-item">
           <div className="menu-icon">
             <LiaSignOutAltSolid />
           </div>
