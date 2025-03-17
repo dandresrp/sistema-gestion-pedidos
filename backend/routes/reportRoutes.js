@@ -6,31 +6,33 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/reportes/orders/{month}:
+ * /api/reportes/orders:
  *   get:
- *     summary: Obtener ordenes por mes
+ *     summary: Obtener pedidos por mes
  *     tags: [Reportes]
  *     parameters:
- *       - in: path
- *         name: month
+ *       - in: query
+ *         name: startDate
  *         required: true
- *         description: El mes por el que se filtraran las ordenes (1-12).
+ *         description: Fecha de inicio para filtrar pedidos (formato string)
  *         schema:
- *           type: integer
+ *           type: string
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         description: Fecha final para filtrar pedidos (formato string)
+ *         schema:
+ *           type: string
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de ordenes filtradas por mes
+ *         description: Lista de pedidos filtrados por mes
  *       401:
  *         description: No autorizado
  *       500:
  *         description: Error del servidor
  */
-router.get(
-  '/orders/:month',
-  authenticateJWT,
-  reportController.getOrdersByMonth,
-);
+router.get('/orders', authenticateJWT, reportController.getOrdersByMonth);
 
 export default router;
