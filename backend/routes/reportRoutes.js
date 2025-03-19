@@ -13,13 +13,11 @@ const router = express.Router();
  *     parameters:
  *       - in: query
  *         name: startDate
- *         required: true
  *         description: Fecha de inicio para filtrar pedidos ('2025-01-01')
  *         schema:
  *           type: string
  *       - in: query
  *         name: endDate
- *         required: true
  *         description: Fecha final para filtrar pedidos ('2025-01-31')
  *         schema:
  *           type: string
