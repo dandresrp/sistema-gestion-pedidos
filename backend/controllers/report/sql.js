@@ -140,3 +140,25 @@ GROUP BY
 OFFSET COALESCE($3, 0)
 LIMIT $4
 `;
+
+export const SQL_GET_ORDERS_OUT_OF_TIME = `
+  SELECT
+    p.fecha_estimada_entrega,
+    p.hora_estimada_entrega,
+    c.nombre AS cliente,
+    STRING_AGG(CONCAT(pr.nombre, ' (', dp.cantidad, ')'), ', ') AS productos,
+    SUM(dp.cantidad) AS cantidad,
+    p.estado,
+    ROUND(EXTRACT(EPOCH FROM (p.fecha_finalizacion - (p.fecha_estimada_entrega + p.hora_estimada_entrega))) / 3600, 2) AS tiempo_retraso
+FROM pedidos p
+JOIN clientes c ON p.id_cliente = c.id_cliente
+JOIN detallespedido dp ON p.id_pedido = dp.id_pedido
+JOIN productos pr ON dp.id_producto = pr.id_producto
+WHERE
+  ($1::date IS NULL OR p.fecha_finalizacion >= $1::date)
+  AND ($2::date IS NULL OR p.fecha_finalizacion <= $2::date)
+GROUP BY p.id_pedido, p.fecha_estimada_entrega, p.hora_estimada_entrega, c.nombre, p.estado, p.fecha_finalizacion
+HAVING ROUND(EXTRACT(EPOCH FROM (p.fecha_finalizacion - (p.fecha_estimada_entrega + p.hora_estimada_entrega))) / 3600, 2) >= 1
+OFFSET COALESCE($3, 0)
+LIMIT $4
+`;
