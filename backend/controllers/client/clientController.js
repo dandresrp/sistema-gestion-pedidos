@@ -1,10 +1,16 @@
-import { query } from '../db.js';
+import { query } from '../../db.js';
+import {
+  buildUpdateClientSQL,
+  SQL_ADD_CLIENT,
+  SQL_DELETE_CLIENT,
+  SQL_GET_ALL_CLIENTS,
+  SQL_GET_CLIENT_BY_ID,
+  SQL_GET_CLIENT_BY_PHONE,
+} from './sql.js';
 
 export const getAllClients = async (req, res) => {
   try {
-    const result = await query(
-      'SELECT id_cliente, nombre, telefono, correo, direccion FROM clientes',
-    );
+    const result = await query(SQL_GET_ALL_CLIENTS);
     res.success(result.rows);
   } catch (error) {
     console.error('Error al obtener clientes: ', error);
@@ -15,10 +21,7 @@ export const getAllClients = async (req, res) => {
 export const getClientById = async (req, res) => {
   const { id_cliente } = req.params;
   try {
-    const result = await query(
-      'SELECT id_cliente, nombre, telefono, correo, direccion FROM clientes WHERE id_cliente = $1',
-      [id_cliente],
-    );
+    const result = await query(SQL_GET_CLIENT_BY_ID, [id_cliente]);
 
     if (result.rows.length === 0) {
       return res.error('Cliente no encontrado', 404);
@@ -28,6 +31,30 @@ export const getClientById = async (req, res) => {
   } catch (error) {
     console.error('Error al obtener este Cliente', error);
     res.error('Error al obtener datos de este cliente');
+  }
+};
+
+export const addClient = async (req, res) => {
+  const { nombre, telefono, correo, direccion } = req.body;
+
+  try {
+    const existingClient = await query(SQL_GET_CLIENT_BY_PHONE, [telefono]);
+
+    if (existingClient.rows.length > 0) {
+      return res.error('El cliente ya está registrado', 400);
+    }
+
+    const result = await query(SQL_ADD_CLIENT, [
+      nombre,
+      telefono,
+      correo,
+      direccion,
+    ]);
+
+    res.success(result.rows[0], 'Cliente agregado correctamente', 201);
+  } catch (error) {
+    console.log('Error al agregar cliente:', error);
+    res.error('Error al agregar cliente');
   }
 };
 
@@ -67,10 +94,8 @@ export const updateClient = async (req, res) => {
 
     values.push(id_cliente);
 
-    const result = await query(
-      `UPDATE clientes SET ${updates.join(', ')} WHERE id_cliente = $${paramCounter} RETURNING *`,
-      values,
-    );
+    const SQL_UPDATE_CLIENT = buildUpdateClientSQL(updates, paramCounter);
+    const result = await query(SQL_UPDATE_CLIENT, values);
 
     if (result.rows.length === 0) {
       return res.error('Cliente no encontrado', 404);
@@ -87,10 +112,7 @@ export const deleteClient = async (req, res) => {
   const { id_cliente } = req.params;
 
   try {
-    const result = await query(
-      'DELETE FROM clientes WHERE id_cliente = $1 RETURNING *',
-      [id_cliente],
-    );
+    const result = await query(SQL_DELETE_CLIENT, [id_cliente]);
 
     if (result.rows.length === 0) {
       return res.error('Cliente no encontrado', 404);
@@ -100,30 +122,5 @@ export const deleteClient = async (req, res) => {
   } catch (error) {
     console.error('Error al eliminar cliente:', error);
     res.error('Error al eliminar cliente:');
-  }
-};
-
-export const addClient = async (req, res) => {
-  const { nombre, telefono, correo, direccion } = req.body;
-
-  try {
-    const existingPhone = await query(
-      'SELECT * FROM clientes WHERE telefono = $1',
-      [telefono],
-    );
-
-    if (existingPhone.rows.length > 0) {
-      return res.error('El teléfono ya está registrado', 400);
-    }
-
-    const result = await query(
-      'INSERT INTO clientes (nombre, telefono, correo, direccion) VALUES ($1, $2, $3, $4) RETURNING *',
-      [nombre, telefono, correo, direccion],
-    );
-
-    res.success(result.rows[0], 'Cliente agregado correctamente', 201);
-  } catch (error) {
-    console.log('Error al agregar cliente:', error);
-    res.error('Error al agregar cliente');
   }
 };

@@ -1,6 +1,6 @@
-import express from "express";
-import {authenticateJWT, authorizeAdmin} from "../middlewares/auth.js";
-import * as userController from "../controllers/userController.js";
+import express from 'express';
+import { authenticateJWT, authorizeAdmin } from '../middlewares/auth.js';
+import * as userController from '../controllers/user/userController.js';
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ const router = express.Router();
  *       401:
  *         description: No autorizado
  */
-router.get("/", authenticateJWT, userController.getAllUsers);
+router.get('/', authenticateJWT, userController.getAllUsers);
 
 /**
  * @swagger
@@ -41,7 +41,7 @@ router.get("/", authenticateJWT, userController.getAllUsers);
  *       404:
  *         description: Usuario no encontrado
  */
-router.get("/:id_usuario", authenticateJWT, userController.getUserById);
+router.get('/:id_usuario', authenticateJWT, userController.getUserById);
 
 /**
  * @swagger
@@ -74,7 +74,11 @@ router.get("/:id_usuario", authenticateJWT, userController.getUserById);
  *       401:
  *         description: No autorizado
  */
-router.put("/:id_usuario", [authenticateJWT, authorizeAdmin], userController.updateUser);
+router.put(
+  '/:id_usuario',
+  [authenticateJWT, authorizeAdmin],
+  userController.updateUser,
+);
 
 /**
  * @swagger
@@ -97,6 +101,10 @@ router.put("/:id_usuario", [authenticateJWT, authorizeAdmin], userController.upd
  *       404:
  *         description: Usuario no encontrado
  */
-router.delete("/:id_usuario", [authenticateJWT, authorizeAdmin], userController.deleteUser);
+router.delete(
+  '/:id_usuario',
+  [authenticateJWT, authorizeAdmin],
+  userController.deleteUser,
+);
 
 export default router;
