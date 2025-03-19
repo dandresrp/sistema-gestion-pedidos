@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/reportes/orders:
+ * /api/reportes/orders-by-month:
  *   get:
  *     summary: Obtener pedidos por mes
  *     tags: [Reportes]
@@ -41,6 +41,32 @@ const router = express.Router();
  *       500:
  *         description: Error del servidor
  */
-router.get('/orders', authenticateJWT, reportController.getOrdersByMonth);
+router.get(
+  '/orders-by-month',
+  authenticateJWT,
+  reportController.getOrdersByMonth,
+);
+
+/**
+ * @swagger
+ * /api/reportes/income-by-month:
+ *   get:
+ *     summary: Obtener ingresos por mes
+ *     tags: [Reportes]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de ingresos filtrados por mes
+ *       401:
+ *         description: No autorizado
+ *       500:
+ *         description: Error del servidor
+ */
+router.get(
+  '/income-by-month',
+  authenticateJWT,
+  reportController.getIncomeByMonth,
+);
 
 export default router;
