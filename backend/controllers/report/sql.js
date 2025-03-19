@@ -81,3 +81,34 @@ ORDER BY
         WHEN semana = 'Total' THEN 5
     END
 `;
+
+export const SQL_GET_PENDING_ORDERS = `
+  SELECT
+    p.fecha_estimada_entrega,
+    p.hora_estimada_entrega,
+    c.nombre AS nombre_cliente,
+    p.estado,
+    STRING_AGG(
+        CONCAT(prod.nombre, ' (', dp.cantidad, ')'), ', '
+    ) AS productos,
+    SUM(dp.cantidad) AS cantidad_total_productos
+FROM
+    public.pedidos p
+JOIN
+    public.clientes c ON p.id_cliente = c.id_cliente
+JOIN
+    public.detallespedido dp ON p.id_pedido = dp.id_pedido
+JOIN
+    public.productos prod ON dp.id_producto = prod.id_producto
+WHERE
+  ($1::date IS NULL OR p.fecha_finalizacion >= $1::date)
+  AND ($2::date IS NULL OR p.fecha_finalizacion <= $2::date)
+  AND p.estado IN ('Creado', 'En produccion', 'En espera')
+GROUP BY
+    p.id_pedido, p.fecha_estimada_entrega, p.hora_estimada_entrega, c.nombre, p.estado
+ORDER BY
+    p.fecha_estimada_entrega ASC,
+    p.hora_estimada_entrega ASC
+OFFSET COALESCE($3, 0)
+LIMIT $4;
+`;
