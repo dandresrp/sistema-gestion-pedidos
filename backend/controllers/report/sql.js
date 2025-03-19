@@ -112,3 +112,31 @@ ORDER BY
 OFFSET COALESCE($3, 0)
 LIMIT $4;
 `;
+
+export const SQL_GET_REJECTED_ORDERS = `
+SELECT
+    p.fecha_creacion as fecha_del_pedido,
+    p.fecha_modificacion as fecha_de_rechazo,
+    c.nombre AS cliente,
+    STRING_AGG(
+        CONCAT(prod.nombre, ' (', dp.cantidad, ')'), ', '
+    ) AS productos,
+    SUM(dp.cantidad) AS cantidad,
+    p.notas
+FROM
+    public.pedidos p
+JOIN
+    public.clientes c ON p.id_cliente = c.id_cliente
+JOIN
+    public.detallespedido dp ON p.id_pedido = dp.id_pedido
+JOIN
+    public.productos prod ON dp.id_producto = prod.id_producto
+WHERE
+  ($1::date IS NULL OR p.fecha_finalizacion >= $1::date)
+  AND ($2::date IS NULL OR p.fecha_finalizacion <= $2::date)
+  AND p.estado = 'Rechazado'
+GROUP BY
+    p.id_pedido, p.fecha_creacion, p.fecha_modificacion, c.nombre, p.notas
+OFFSET COALESCE($3, 0)
+LIMIT $4
+`;

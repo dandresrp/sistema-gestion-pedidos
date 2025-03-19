@@ -3,6 +3,7 @@ import {
   SQL_GET_INCOME_BY_MONTH,
   SQL_GET_ORDERS_BY_MONTH,
   SQL_GET_PENDING_ORDERS,
+  SQL_GET_REJECTED_ORDERS,
 } from './sql.js';
 
 export const getOrdersByMonth = async (req, res) => {
@@ -46,5 +47,22 @@ export const getPendingOrders = async (req, res) => {
   } catch (error) {
     console.error('Error fetching pending orders:', error);
     res.error('Error al obtener pedidos pendientes');
+  }
+};
+
+export const getRejectedOrders = async (req, res) => {
+  try {
+    const { startDate, endDate, offset, limit } = req.query;
+
+    const result = await query(SQL_GET_REJECTED_ORDERS, [
+      startDate || null,
+      endDate || null,
+      offset || null,
+      limit || null,
+    ]);
+    res.success(result.rows);
+  } catch (error) {
+    console.error('Error fetching rejected orders:', error);
+    res.error('Error al obtener pedidos rechazados');
   }
 };
