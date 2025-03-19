@@ -14,15 +14,25 @@ const router = express.Router();
  *       - in: query
  *         name: startDate
  *         required: true
- *         description: Fecha de inicio para filtrar pedidos (formato string)
+ *         description: Fecha de inicio para filtrar pedidos ('2025-01-01')
  *         schema:
  *           type: string
  *       - in: query
  *         name: endDate
  *         required: true
- *         description: Fecha final para filtrar pedidos (formato string)
+ *         description: Fecha final para filtrar pedidos ('2025-01-31')
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: offset
+ *         description: Número de registros a omitir para la paginación
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         description: Número máximo de resultados a devolver
+ *         schema:
+ *           type: integer
  *     security:
  *       - bearerAuth: []
  *     responses:

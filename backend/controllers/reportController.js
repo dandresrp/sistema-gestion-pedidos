@@ -2,7 +2,7 @@ import { query } from '../db.js';
 
 export const getOrdersByMonth = async (req, res) => {
   try {
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, offset, limit } = req.query;
 
     if (!startDate || !endDate) {
       return res.error('Faltan fechas para filtrar los pedidos', 400);
@@ -24,8 +24,14 @@ export const getOrdersByMonth = async (req, res) => {
       ON dp.id_producto = pr.id_producto
       WHERE p.fecha_creacion >= $1::date AND p.fecha_creacion <= $2::date
       ORDER BY p.fecha_creacion DESC
+      OFFSET $3 LIMIT $4;
     `;
-    const result = await query(SQL_GET_ORDERS_BY_MONTH, [startDate, endDate]);
+    const result = await query(SQL_GET_ORDERS_BY_MONTH, [
+      startDate,
+      endDate,
+      offset,
+      limit,
+    ]);
     res.success(result.rows);
   } catch (error) {
     console.error('Error fetching orders by month:', error);
