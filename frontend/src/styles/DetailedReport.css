@@ -1,22 +1,22 @@
 .reports-container {
   padding: 3px 20px 3px 20px;
   max-width: 100%;
-  position: relative;
+  background-color: #ebf1f9;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .reports-header {
   display: flex;
-  flex-direction: column;
   margin-bottom: 20px;
   position: sticky;
   top: 0;
-  background-color: white;
   padding: 8px 0;
   z-index: 10;
-  border-bottom: 1px solid #eaeaea;
 }
 
-.header-top-row {
+.header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -26,7 +26,7 @@
 .company-logo {
   flex: 0 0 auto;
   max-width: 120px;
-  height: 120px;
+  height: 6em;
 }
 
 .company-logo img {
@@ -41,42 +41,46 @@
 
 .report-title h2 {
   margin: 0;
-  color: #333;
+  color: #6991c7;
   font-size: 24px;
 }
 
 .report-period {
   flex: 0 0 auto;
   font-size: 16px;
-  color: #555;
+  color: #6991c7;
   text-align: right;
 }
 
 .report-period strong {
-  color: #333;
+  color: #6991c7;
 }
 
 .table-container {
-  overflow-x: auto;
+  flex-grow: 1;
+  overflow: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  max-height: 67vh;
-  overflow-y: auto;
+  margin-bottom: 20px;
+  height: calc(90vh - 700px);
+}
+::-webkit-scrollbar {
+  display: none;
 }
 
 .reports-table {
+  overflow-y: auto;
   width: 100%;
-  border-collapse: separate;
   border-spacing: 0;
   font-size: 14px;
 }
 
 .reports-table th {
-  background-color: #f2f2f2;
+  background-color: #8fa3cc;
   color: #333;
   font-weight: bold;
   text-align: left;
-  padding: 12px 15px;
+  padding: 10px 15px;
   border-bottom: 2px solid #ddd;
   position: sticky;
   top: 0;
@@ -84,6 +88,8 @@
 }
 
 .reports-table td {
+  justify-content: center;
+  color: #333;
   padding: 10px 15px;
   border-bottom: 1px solid #ddd;
 }
@@ -129,7 +135,7 @@
   }
 
   .table-container {
-    max-height: 60vh;
+    max-height: 65%;
   }
 }
 
@@ -137,8 +143,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 0.1em;
   flex-wrap: wrap;
+  margin-bottom: 0.2em;
   gap: 5px;
 }
 
@@ -190,4 +197,13 @@
     width: 100%;
     text-align: center;
   }
+}
+.report-footer {
+  text-align: center;
+  font-size: 14px;
+  padding: 8px;
+}
+
+.report-footer p {
+  color: #6991c7;
 }

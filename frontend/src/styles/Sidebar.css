@@ -1,59 +1,28 @@
 .sidebar {
   width: 60px;
-  position: absolute;
-  left: 0;
-  top: 0;
   height: 100vh;
   background: linear-gradient(to right, #2b5876, #4e4376);
-  color: white;
   display: flex;
   flex-direction: column;
-
   padding: 10px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
   transition: width 0.6s ease-in-out;
+  overflow: hidden;
 }
 
 .sidebar.expanded {
-  width: 220px;
+  width: 250px;
 }
 
-.user-info {
-  margin-bottom: 10px;
+/* Contenedor de menú con scroll si es necesario */
+.menu-container {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  width: 80px;
-  font-size: 16px;
-  padding: 7px;
-  margin-left: 6px;
-}
-
-.avatar {
-  font-size: 30px;
-  width: 30px;
-  height: 30px;
-  line-height: 1;
-}
-
-.user-name {
-  margin-left: 10px;
-  opacity: 0;
-  transition: 1s ease-in-out;
-}
-
-.user-name.expanded {
-  margin-left: 10px;
-  opacity: 1;
-  transition: 1s ease-in-out;
+  flex-direction: column;
 }
 
 .menu {
-  justify-content: left;
-  justify-items: left;
-  align-items: left;
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .menu-item {
@@ -61,8 +30,8 @@
   margin-bottom: 10px;
   cursor: pointer;
   display: flex;
-  padding: 10px;
-  width: 200px;
+  padding: 0.5rem;
+  width: 170px;
   text-decoration: none;
   color: white;
   align-items: center;
@@ -93,28 +62,31 @@
   opacity: 0;
 }
 
-.logout {
-  width: 100%;
-  margin-bottom: 15px;
+.submenu-container {
+  flex-grow: 1; /* Hace que este bloque use todo el espacio restante */
+  overflow: hidden; /* Evita que el contenido empuje el logout */
+  display: flex;
+  flex-direction: column;
+  transition: 0.5s ease-in-out;
 }
 
-.logout-item {
-  color: #fff;
-}
-
+/* Submenú */
 .submenu {
-  max-height: 0;
-  overflow: hidden;
+  display: none;
   transition: max-height 0.5s ease-in-out;
-  padding-left: 40px;
 }
 
 .submenu.open {
-  max-height: 350px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Se expande hasta el espacio disponible */
+  overflow-y: auto; /* Permite scroll solo dentro del submenú */
+  padding-left: 40px;
 }
 
 .submenu-item {
-  padding: 7px;
+  padding: 0.5rem;
+  width: 150px;
   display: block;
   color: white;
   text-decoration: none;
@@ -125,4 +97,9 @@
   color: #fff;
   border-radius: 9px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Logout siempre abajo */
+.logout {
+  padding: 10px 0;
 }

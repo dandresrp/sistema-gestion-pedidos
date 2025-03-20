@@ -1,0 +1,76 @@
+.report-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 100vh;
+  overflow: hidden; /* Evita el scroll en todo el contenedor */
+  background-color: #ebf1f9;
+}
+
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  flex-shrink: 0; /* Evita que se reduzca al hacer scroll */
+}
+
+.report-logo {
+  max-width: 120px;
+  height: 7rem;
+}
+
+.report-info {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.report-title {
+  font-size: 1.5rem;
+  color: #6991c7;
+}
+
+.report-dates {
+  font-size: 0.9rem;
+  color: #6991c7;
+}
+
+.report-content {
+  display: flex; /* Convierte en un contenedor flex */
+  flex-direction: row; /* Alinea los gráficos en fila */
+  flex-wrap: wrap; /* Permite que los gráficos se ajusten si no caben */
+  gap: 20px; /* Espacio entre gráficos */
+  justify-content: center; /* Centra los gráficos en la fila */
+  align-items: center; /* Alinea los gráficos al inicio */
+  overflow-x: auto; /* Habilita scroll horizontal si los gráficos son grandes */
+  padding: 10px;
+  color: #333;
+}
+
+.report-footer {
+  text-align: center;
+  font-size: 14px;
+  padding: 8px;
+}
+
+.report-footer p {
+  color: #6991c7;
+}
+
+.table-container-component {
+  border-radius: 2px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.report-table th {
+  color: #333;
+  background-color: #8fa3cc;
+}
+
+.chart-container {
+  border-radius: 2px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

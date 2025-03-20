@@ -1,0 +1,14 @@
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  padding: 20px;
+  width: 550px; /* Ajusta el ancho */
+  height: 350px; /* Ajusta la altura */
+}
+
+.responsive-chart {
+  width: 100%;
+  height: 100%;
+}

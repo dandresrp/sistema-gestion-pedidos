@@ -8,29 +8,10 @@ import {
   LiaSignOutAltSolid,
   LiaUserCircleSolid,
 } from "react-icons/lia";
-import { Link, useNavigate } from "react-router-dom";
-import generateReportData from "../provider/reportsProvider";
+import { Link } from "react-router-dom";
 
-const Sidebar = ({
-  setReportData,
-  setTitle,
-  sidebarExpanded,
-  setSidebarExpanded,
-}) => {
+const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
   const [isReportesOpen, setIsReportesOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const reportFetchers = {
-    "completed-orders": () => generateReportData(1097),
-    reporte2: generateReportData(50),
-  };
-
-  const reportTitles = {
-    "completed-orders": `PEDIDOS REALIZADOS EL MES DE ${
-      new Date().getMonth() + 1
-    }`,
-    reporte2: generateReportData(50),
-  };
 
   const handleMouseEnter = () => {
     setSidebarExpanded(true);
@@ -46,34 +27,24 @@ const Sidebar = ({
     }
   }, [sidebarExpanded]);
 
-  const handleReportClick = async (reportName) => {
-    const fetchFunction = reportFetchers[reportName];
-    if (fetchFunction) {
-      const data = await fetchFunction();
-      setReportData(data);
-      setTitle(reportTitles[reportName]);
-    }
-    navigate(`/reports/${reportName}`);
-  };
-
   return (
     <div
       className={sidebarExpanded ? "sidebar expanded" : "sidebar"}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Icono de usuario y nombre */}
-      <div className="user-info">
-        <div className="avatar">
-          <LiaUserCircleSolid />
-        </div>
-        <span className={sidebarExpanded ? "user-name expanded" : "user-name"}>
-          Usuario
-        </span>
-      </div>
-
       {/* Menú */}
       <nav className="menu">
+        <Link className="menu-item">
+          <div className="menu-icon">
+            <LiaUserCircleSolid />
+          </div>
+          <span
+            className={sidebarExpanded ? "menu-text expanded" : "menu-text"}
+          >
+            {"Usuario"}
+          </span>
+        </Link>
         <Link to={"/home"} className="menu-item">
           <div className="menu-icon">
             <LiaHomeSolid />
@@ -104,8 +75,8 @@ const Sidebar = ({
             {"Inventario"}
           </span>
         </Link>
-        <div
-          className="menu-item reportes"
+        <Link
+          className="menu-item"
           onClick={() => setIsReportesOpen(!isReportesOpen)}
         >
           <div className="menu-icon">
@@ -116,39 +87,53 @@ const Sidebar = ({
           >
             {"Reportes"}
           </span>
-        </div>
-        {sidebarExpanded && (
-          <div className={`submenu ${isReportesOpen ? "open" : ""}`}>
-            <Link
-              onClick={() => handleReportClick("completed-orders")}
-              className="submenu-item"
-            >
-              Pedidos realizados (mes)
-            </Link>
-            <Link href="/reports/2" className="submenu-item">
-              Reporte 2
-            </Link>
-            <Link href="/reports/2" className="submenu-item">
-              Reporte 3
-            </Link>
-            <Link href="/reports/2" className="submenu-item">
-              Reporte 4
-            </Link>
-            <Link href="/reports/2" className="submenu-item">
-              Reporte 5
-            </Link>
-            <Link href="/reports/2" className="submenu-item">
-              Reporte 6
-            </Link>
-            <Link href="/reports/2" className="submenu-item">
-              Reporte 7
-            </Link>
-            <Link href="/reports/2" className="submenu-item">
-              Reporte 8
-            </Link>
-          </div>
-        )}
+        </Link>
       </nav>
+
+      <div className="submenu-container">
+        <div
+          className={`submenu ${
+            sidebarExpanded && isReportesOpen ? "open" : ""
+          }`}
+        >
+          <Link
+            to="/reports/completed-orders/detailed"
+            className="submenu-item"
+          >
+            Pedidos realizados
+          </Link>
+          <Link to="/reports/pending-orders/detailed" className="submenu-item">
+            Pedidos Pendientes
+          </Link>
+          <Link to="/reports/inventory/detailed" className="submenu-item">
+            Reporte de Inventario
+          </Link>
+          <Link to="/reports/delayed-orders/detailed" className="submenu-item">
+            Pedidos Retrasados
+          </Link>
+          <Link
+            to="/reports/monthly-income/synthetized"
+            className="submenu-item"
+          >
+            Ingresos por mes
+          </Link>
+          <Link
+            to="/reports/best-selling-products/synthetized"
+            className="submenu-item"
+          >
+            Productos mas vendidos
+          </Link>
+          <Link
+            to="/reports/production-capacity/synthetized"
+            className="submenu-item"
+          >
+            Capacidad de Producción
+          </Link>
+          <Link to="/reports/rejected-orders/detailed" className="submenu-item">
+            Pedidos Rechazados
+          </Link>
+        </div>
+      </div>
 
       {/* Cerrar sesión */}
       <div className="logout">

@@ -46,11 +46,10 @@ const AppRouter = () => {
             <Route index element={<Navigate to="home" />} />
             <Route path="home" element={<Dashboard />} />
             <Route path="orders" element={<Orders />} />
-            <Route path="reports">
-              <Route path="completed-orders" element={<Reports />} />
-              <Route path="reporte2" element={<Reports />} />
-              <Route path="reporte3" element={<Reports />} />
-            </Route>
+            <Route
+              path="reports/:reportName/:reportType"
+              element={<Reports />}
+            />
             <Route path="inventory" element={<Inventory />} />
           </Route>
         </Route>

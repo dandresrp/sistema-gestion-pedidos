@@ -2,13 +2,21 @@ import logo from "../assets/image 1.png";
 import { useState, useEffect } from "react";
 import "../styles/DetailedReport.css";
 
+const Footer = () => {
+  const fecha = new Date().toLocaleDateString();
+  return (
+    <div className="report-footer">
+      <p>Fecha de emisión: {fecha}</p>
+    </div>
+  );
+};
 const DetailedReports = ({
   title = "Reporte",
   data = [],
   columns = [],
   recordsPerPage = 20,
-  date1 = "01/01/2023",
-  date2 = "31/02/2023",
+  date1 = "01/03/2025",
+  date2 = new Date().toLocaleDateString(),
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatedData, setPaginatedData] = useState([]);
@@ -22,21 +30,23 @@ const DetailedReports = ({
       ? Object.keys(data[0]).map((key) => ({
           id: key,
           header: key.charAt(0).toUpperCase() + key.slice(1),
-          accessor: key,
         }))
       : [];
 
   // Actualizar paginación
   useEffect(() => {
+    if (!Array.isArray(data)) {
+      console.error("Error: data no es un array", data);
+      return;
+    }
+
     const totalPages = Math.ceil(data.length / recordsPerPage);
     setTotalPages(totalPages || 1);
 
-    // Asegurarse de que la pagina actual sea valida
     if (currentPage > totalPages) {
       setCurrentPage(totalPages || 1);
     }
 
-    // Cortar los datos en función de la página actual
     const startIndex = (currentPage - 1) * recordsPerPage;
     const endIndex = startIndex + recordsPerPage;
     setPaginatedData(data.slice(startIndex, endIndex));
@@ -70,7 +80,7 @@ const DetailedReports = ({
   return (
     <div className="reports-container">
       <div className="reports-header">
-        <div className="header-top-row">
+        <div className="header-row">
           <div className="company-logo">
             <img src={logo} alt="Logo de la empresa" />
           </div>
@@ -103,9 +113,7 @@ const DetailedReports = ({
               paginatedData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {tableColumns.map((column) => (
-                    <td key={`${rowIndex}-${column.id}`}>
-                      {row[column.accessor]}
-                    </td>
+                    <td key={`${rowIndex}-${column.id}`}>{row[column.id]}</td>
                   ))}
                 </tr>
               ))
@@ -171,6 +179,9 @@ const DetailedReports = ({
           </span>
         </div>
       )}
+
+      {/* ✅ Aquí agregamos el Footer */}
+      <Footer />
     </div>
   );
 };

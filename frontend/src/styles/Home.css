@@ -1,19 +1,12 @@
 .home-container {
   display: flex;
-  height: 100vh;
+  height: 100%;
   width: 100vw;
 }
 
 .content {
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  margin-left: 60px;
   transition: margin-left 0.6s ease-in-out;
-  padding: 0px 20px 0px 20px;
   width: 100%;
-}
-
-.sidebar.expanded + .content {
-  margin-left: 220px;
 }

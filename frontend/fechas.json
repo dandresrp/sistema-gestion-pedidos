@@ -1,0 +1,503 @@
+"pedidos_pendientes": [
+    {
+      "fecha_pedido": "2025-03-12",
+      "cliente": "Elena Navarro",
+      "detalle_pedido": "Camisa L sublimada (3), Pluma grabada (2), Gorra sublimada (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-10",
+      "hora_entrega": "13:00",
+      "producto": "Camisa L sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-13",
+      "cliente": "Federico Valenzuela",
+      "detalle_pedido": "Cartera sublimada (2), Camisa L sublimada (4), Gorra sublimada (5)",
+      "estado": "Pendiente",
+      "fecha_entrega": "2025-03-05",
+      "hora_entrega": "16:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-19",
+      "cliente": "Edgar Villalobos",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-18",
+      "hora_entrega": "14:00",
+      "producto": "Botella térmica personalizada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-13",
+      "cliente": "Miguel Mendoza",
+      "detalle_pedido": "Cartera sublimada (2), Camisa L sublimada (4), Gorra sublimada (5)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-02",
+      "hora_entrega": "14:00",
+      "producto": "Camisa L sublimada",
+      "cantidad": 4
+    },
+    {
+      "fecha_pedido": "2025-03-10",
+      "cliente": "Guillermo Escobar",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-25",
+      "hora_entrega": "15:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-17",
+      "cliente": "Silvia Zambrano",
+      "detalle_pedido": "Camisa L sublimada (3), Pluma grabada (2), Gorra sublimada (5)",
+      "estado": "Pendiente",
+      "fecha_entrega": "2025-03-22",
+      "hora_entrega": "11:00",
+      "producto": "Pluma grabada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-17",
+      "cliente": "Fernando Villalobos",
+      "detalle_pedido": "Llavero sublimado (5), Cojín personalizado (4), Camisa S sublimada (2)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-31",
+      "hora_entrega": "13:00",
+      "producto": "Llavero sublimado",
+      "cantidad": 5
+    },
+    {
+      "fecha_pedido": "2025-03-23",
+      "cliente": "Andrea Chávez",
+      "detalle_pedido": "Portarretrato personalizado (3), Portarretrato personalizado (3)",
+      "estado": "Pendiente",
+      "fecha_entrega": "2025-03-15",
+      "hora_entrega": "14:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-21",
+      "cliente": "César Medina",
+      "detalle_pedido": "Termo personalizado (5), Gorra sublimada (3)",
+      "estado": "Pendiente",
+      "fecha_entrega": "2025-03-14",
+      "hora_entrega": "10:00",
+      "producto": "Gorra sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-27",
+      "cliente": "Fernando Villalobos",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-09",
+      "hora_entrega": "15:00",
+      "producto": "Botella térmica personalizada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-16",
+      "cliente": "Héctor Sánchez",
+      "detalle_pedido": "Camisa XL sublimada (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-03",
+      "hora_entrega": "15:00",
+      "producto": "Camisa XL sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-17",
+      "cliente": "Rosa López",
+      "detalle_pedido": "Libreta personalizada (3), Cojín personalizado (2)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-06",
+      "hora_entrega": "11:00",
+      "producto": "Libreta personalizada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-17",
+      "cliente": "Sofía Montenegro",
+      "detalle_pedido": "Portarretrato personalizado (4), Mousepad personalizado (5)",
+      "estado": "Pendiente",
+      "fecha_entrega": "2025-03-15",
+      "hora_entrega": "11:00",
+      "producto": "Mousepad personalizado",
+      "cantidad": 5
+    },
+    {
+      "fecha_pedido": "2025-03-22",
+      "cliente": "Héctor Silva",
+      "detalle_pedido": "Cartera sublimada (2), Camisa L sublimada (4), Gorra sublimada (5)",
+      "estado": "Pendiente",
+      "fecha_entrega": "2025-03-01",
+      "hora_entrega": "13:00",
+      "producto": "Camisa L sublimada",
+      "cantidad": 4
+    },
+    {
+      "fecha_pedido": "2025-03-26",
+      "cliente": "Andrea Vega",
+      "detalle_pedido": "Portarretrato personalizado (3), Portarretrato personalizado (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-10",
+      "hora_entrega": "14:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-15",
+      "cliente": "Andrea Vega",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Pendiente",
+      "fecha_entrega": "2025-03-17",
+      "hora_entrega": "11:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-19",
+      "cliente": "Silvia Trujillo",
+      "detalle_pedido": "Cartera sublimada (1), Pluma grabada (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-23",
+      "hora_entrega": "10:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 1
+    },
+    {
+      "fecha_pedido": "2025-03-12",
+      "cliente": "Edgar Molina",
+      "detalle_pedido": "Portarretrato personalizado (3), Portarretrato personalizado (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-07",
+      "hora_entrega": "11:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-14",
+      "cliente": "Silvia Trujillo",
+      "detalle_pedido": "Taza personalizada (4), Portarretrato personalizado (3), Cartera sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-02",
+      "hora_entrega": "15:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-17",
+      "cliente": "Monica León",
+      "detalle_pedido": "Taza personalizada (4), Portarretrato personalizado (3), Cartera sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-13",
+      "hora_entrega": "12:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-24",
+      "cliente": "Roberto Figueroa",
+      "detalle_pedido": "Libreta personalizada (3), Cojín personalizado (2)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-14",
+      "hora_entrega": "16:00",
+      "producto": "Libreta personalizada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-06",
+      "cliente": "Silvia Zambrano",
+      "detalle_pedido": "Taza personalizada (4), Portarretrato personalizado (3), Cartera sublimada (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-13",
+      "hora_entrega": "12:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-03",
+      "cliente": "Patricia Reyes",
+      "detalle_pedido": "Camisa XL sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-17",
+      "hora_entrega": "12:00",
+      "producto": "Camisa XL sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-10",
+      "cliente": "Luis Martínez",
+      "detalle_pedido": "Cartera sublimada (2), Camisa L sublimada (4), Gorra sublimada (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-06",
+      "hora_entrega": "12:00",
+      "producto": "Camisa L sublimada",
+      "cantidad": 4
+    },
+    {
+      "fecha_pedido": "2025-03-01",
+      "cliente": "Teresa Silva",
+      "detalle_pedido": "Libreta personalizada (3), Cojín personalizado (2)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-15",
+      "hora_entrega": "15:00",
+      "producto": "Cojín personalizado",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-14",
+      "cliente": "Edgar Villalobos",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-28",
+      "hora_entrega": "14:00",
+      "producto": "Taza personalizada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-10",
+      "cliente": "Mariana Domínguez",
+      "detalle_pedido": "Gorra sublimada (2), Camisa XL sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-30",
+      "hora_entrega": "11:00",
+      "producto": "Gorra sublimada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-03",
+      "cliente": "Beatriz Vargas",
+      "detalle_pedido": "Libreta personalizada (3), Cojín personalizado (2)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-12",
+      "hora_entrega": "16:00",
+      "producto": "Cojín personalizado",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-05",
+      "cliente": "Patricia Muñoz",
+      "detalle_pedido": "Taza personalizada (4), Portarretrato personalizado (3), Cartera sublimada (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-14",
+      "hora_entrega": "16:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-04",
+      "cliente": "Edgar Villalobos",
+      "detalle_pedido": "Cartera sublimada (1), Pluma grabada (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-17",
+      "hora_entrega": "15:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 1
+    },
+    {
+      "fecha_pedido": "2025-03-03",
+      "cliente": "Monica León",
+      "detalle_pedido": "Portarretrato personalizado (4)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-01",
+      "hora_entrega": "10:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 4
+    },
+    {
+      "fecha_pedido": "2025-03-04",
+      "cliente": "Sofía Montenegro",
+      "detalle_pedido": "Portarretrato personalizado (4)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-24",
+      "hora_entrega": "12:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 4
+    },
+    {
+      "fecha_pedido": "2025-03-15",
+      "cliente": "Teresa Carrasco",
+      "detalle_pedido": "Taza personalizada (4), Portarretrato personalizado (3), Cartera sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-27",
+      "hora_entrega": "10:00",
+      "producto": "Taza personalizada",
+      "cantidad": 4
+    },
+    {
+      "fecha_pedido": "2025-03-07",
+      "cliente": "Fernando Villalobos",
+      "detalle_pedido": "Portarretrato personalizado (3), Portarretrato personalizado (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-09",
+      "hora_entrega": "10:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-29",
+      "cliente": "Gabriela Rojas",
+      "detalle_pedido": "Cartera sublimada (2), Camisa L sublimada (4), Gorra sublimada (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-16",
+      "hora_entrega": "16:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-31",
+      "cliente": "Mariana Estrada",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-30",
+      "hora_entrega": "14:00",
+      "producto": "Botella térmica personalizada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-09",
+      "cliente": "Héctor Sánchez",
+      "detalle_pedido": "Portarretrato personalizado (3), Portarretrato personalizado (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-18",
+      "hora_entrega": "13:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-24",
+      "cliente": "Teresa Silva",
+      "detalle_pedido": "Cartera sublimada (1), Pluma grabada (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-21",
+      "hora_entrega": "13:00",
+      "producto": "Cartera sublimada",
+      "cantidad": 1
+    },
+    {
+      "fecha_pedido": "2025-03-16",
+      "cliente": "Gabriela Navarro",
+      "detalle_pedido": "Cartera sublimada (1), Pluma grabada (5)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-10",
+      "hora_entrega": "15:00",
+      "producto": "Pluma grabada",
+      "cantidad": 5
+    },
+    {
+      "fecha_pedido": "2025-03-16",
+      "cliente": "Elena Escobar",
+      "detalle_pedido": "Llavero sublimado (5), Cojín personalizado (4), Camisa S sublimada (2)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-05",
+      "hora_entrega": "16:00",
+      "producto": "Llavero sublimado",
+      "cantidad": 5
+    },
+    {
+      "fecha_pedido": "2025-03-31",
+      "cliente": "José Maldonado",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-08",
+      "hora_entrega": "12:00",
+      "producto": "Botella térmica personalizada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-21",
+      "cliente": "Clara Jiménez",
+      "detalle_pedido": "Portarretrato personalizado (4), Mousepad personalizado (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-21",
+      "hora_entrega": "15:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 4
+    },
+    {
+      "fecha_pedido": "2025-03-10",
+      "cliente": "Guillermo Peralta",
+      "detalle_pedido": "Portarretrato personalizado (4), Mousepad personalizado (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-15",
+      "hora_entrega": "10:00",
+      "producto": "Portarretrato personalizado",
+      "cantidad": 4
+    },
+    {
+      "fecha_pedido": "2025-03-21",
+      "cliente": "Sofía Herrera",
+      "detalle_pedido": "Cartera sublimada (2), Camisa L sublimada (4), Gorra sublimada (5)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-24",
+      "hora_entrega": "13:00",
+      "producto": "Gorra sublimada",
+      "cantidad": 5
+    },
+    {
+      "fecha_pedido": "2025-03-10",
+      "cliente": "Miguel Mendoza",
+      "detalle_pedido": "Gorra sublimada (2), Camisa XL sublimada (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-20",
+      "hora_entrega": "15:00",
+      "producto": "Gorra sublimada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-06",
+      "cliente": "Esteban Reyes",
+      "detalle_pedido": "Camisa XL sublimada (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-14",
+      "hora_entrega": "10:00",
+      "producto": "Camisa XL sublimada",
+      "cantidad": 3
+    },
+    {
+      "fecha_pedido": "2025-03-20",
+      "cliente": "Gonzalo Vargas",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Enviado",
+      "fecha_entrega": "2025-03-13",
+      "hora_entrega": "16:00",
+      "producto": "Botella térmica personalizada",
+      "cantidad": 2
+    },
+    {
+      "fecha_pedido": "2025-03-08",
+      "cliente": "Sofía Estrada",
+      "detalle_pedido": "Cartera sublimada (2), Camisa L sublimada (4), Gorra sublimada (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-09",
+      "hora_entrega": "12:00",
+      "producto": "Gorra sublimada",
+      "cantidad": 5
+    },
+    {
+      "fecha_pedido": "2025-03-05",
+      "cliente": "Héctor Silva",
+      "detalle_pedido": "Cartera sublimada (2), Camisa L sublimada (4), Gorra sublimada (5)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-12",
+      "hora_entrega": "10:00",
+      "producto": "Gorra sublimada",
+      "cantidad": 5
+    },
+    {
+      "fecha_pedido": "2025-03-02",
+      "cliente": "Clara Ortega",
+      "detalle_pedido": "Taza personalizada (2), Botella térmica personalizada (2), Cartera sublimada (3)",
+      "estado": "Producción",
+      "fecha_entrega": "2025-03-19",
+      "hora_entrega": "16:00",
+      "producto": "Taza personalizada",
+      "cantidad": 2
+    }
+  ]
+}
