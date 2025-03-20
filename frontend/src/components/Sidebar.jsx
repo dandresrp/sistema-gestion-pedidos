@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useAuth from "../contexts/useAuth";
 import "../styles/Sidebar.css";
 import {
   LiaHomeSolid,
@@ -11,6 +12,7 @@ import {
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
+  const { logout } = useAuth();
   const [isReportesOpen, setIsReportesOpen] = useState(false);
 
   const handleMouseEnter = () => {
@@ -19,6 +21,11 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
 
   const handleMouseLeave = () => {
     setSidebarExpanded(false);
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
   };
 
   useEffect(() => {
@@ -137,7 +144,7 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
 
       {/* Cerrar sesión */}
       <div className="logout">
-        <a href="/logout" className="menu-item logout-item">
+        <a onClick={handleLogout} className="menu-item logout-item">
           <div className="menu-icon">
             <LiaSignOutAltSolid />
           </div>

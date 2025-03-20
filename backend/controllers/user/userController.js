@@ -1,10 +1,14 @@
-import { query } from '../db.js';
+import { query } from '../../db.js';
+import {
+  SQL_GET_ALL_USERS,
+  SQL_GET_USER_BY_ID,
+  SQL_UPDATE_USER,
+  SQL_DELETE_USER,
+} from './sql.js';
 
 export const getAllUsers = async (req, res) => {
   try {
-    const result = await query(
-      'SELECT id_usuario, nombre_usuario, nombre, correo, rol FROM usuarios',
-    );
+    const result = await query(SQL_GET_ALL_USERS);
     res.success(result.rows);
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
@@ -15,10 +19,7 @@ export const getAllUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const { id_usuario } = req.params;
-    const result = await query(
-      'SELECT id_usuario, nombre_usuario FROM usuarios WHERE id_usuario = $1',
-      [id_usuario],
-    );
+    const result = await query(SQL_GET_USER_BY_ID, [id_usuario]);
 
     if (result.rows.length === 0) {
       return res.error('Usuario no encontrado', 404);
@@ -40,10 +41,7 @@ export const updateUser = async (req, res) => {
       return res.error('El nombre de usuario es requerido', 400);
     }
 
-    const existingUserResult = await query(
-      'SELECT * FROM usuarios WHERE id_usuario = $1',
-      [id_usuario],
-    );
+    const existingUserResult = await query(SQL_GET_USER_BY_ID, [id_usuario]);
 
     if (existingUserResult.rows.length === 0) {
       return res.error('Usuario no encontrado', 404);
@@ -53,10 +51,7 @@ export const updateUser = async (req, res) => {
       return res.error('No tienes permiso para modificar este usuario', 403);
     }
 
-    await query(
-      'UPDATE usuarios SET nombre_usuario = $1 WHERE id_usuario = $2',
-      [nombre_usuario, id_usuario],
-    );
+    await query(SQL_UPDATE_USER, [nombre_usuario, id_usuario]);
 
     res.success(
       { id_usuario, nombre_usuario },
@@ -76,7 +71,7 @@ export const deleteUser = async (req, res) => {
       return res.error('No tienes permiso para eliminar este usuario', 403);
     }
 
-    await query('DELETE FROM usuarios WHERE id_usuario = $1', [id_usuario]);
+    await query(SQL_DELETE_USER, [id_usuario]);
 
     res.success(null, 'Usuario eliminado correctamente');
   } catch (error) {
