@@ -37,7 +37,7 @@ export const reportService = {
     });
   },
 
-  getInventoy: async () => {
+  getInventory: async () => {
     return await apiClient.get("/reportes/inventory");
   },
 
