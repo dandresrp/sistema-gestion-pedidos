@@ -110,13 +110,13 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
             Pedidos realizados
           </Link>
           <Link to="/reports/pending-orders/detailed" className="submenu-item">
-            Pedidos Pendientes
+            Pedidos pendientes
           </Link>
           <Link to="/reports/inventory/detailed" className="submenu-item">
-            Reporte de Inventario
+            Reporte de inventario
           </Link>
           <Link to="/reports/delayed-orders/detailed" className="submenu-item">
-            Pedidos Retrasados
+            Pedidos retrasados
           </Link>
           <Link
             to="/reports/monthly-income/synthetized"
@@ -134,10 +134,10 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
             to="/reports/production-capacity/synthetized"
             className="submenu-item"
           >
-            Capacidad de Producción
+            Capacidad de producción
           </Link>
           <Link to="/reports/rejected-orders/detailed" className="submenu-item">
-            Pedidos Rechazados
+            Pedidos rechazados
           </Link>
         </div>
       </div>
@@ -151,7 +151,7 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
           <span
             className={sidebarExpanded ? "menu-text expanded" : "menu-text"}
           >
-            SALIR
+            Cerrar sesión
           </span>
         </a>
       </div>
