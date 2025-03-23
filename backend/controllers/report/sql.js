@@ -162,3 +162,88 @@ HAVING ROUND(EXTRACT(EPOCH FROM (p.fecha_finalizacion - (p.fecha_estimada_entreg
 OFFSET COALESCE($3, 0)
 LIMIT $4
 `;
+
+export const SQL_GET_BEST_SELLING_PRODUCTS_HISTORY = `
+WITH ventas_totales AS (
+    SELECT
+        dp.id_producto,
+        SUM(dp.cantidad) AS total_vendido
+    FROM
+        public.detallespedido dp
+    JOIN
+        public.pedidos p ON dp.id_pedido = p.id_pedido
+    WHERE
+        p.fecha_finalizacion IS NOT NULL
+        AND p.estado = 'Entregado'
+        AND (
+            CASE
+                WHEN $1::date IS NOT NULL AND $2::date IS NOT NULL THEN
+                    p.fecha_finalizacion BETWEEN $1::date AND $2::date
+                WHEN $1::date IS NOT NULL THEN
+                    p.fecha_finalizacion >= $1::date
+                WHEN $2::date IS NOT NULL THEN
+                    p.fecha_finalizacion <= $2::date
+                ELSE TRUE
+            END
+        )
+    GROUP BY
+        dp.id_producto
+),
+total_general AS (
+    SELECT COALESCE(SUM(total_vendido), 0) as suma_total
+    FROM ventas_totales
+),
+productos_ordenados AS (
+    SELECT
+        p.nombre AS producto,
+        vt.total_vendido,
+        CASE
+            WHEN (SELECT suma_total FROM total_general) > 0
+            THEN vt.total_vendido * 100.0 / (SELECT suma_total FROM total_general)
+            ELSE 0
+        END AS porcentaje
+    FROM
+        ventas_totales vt
+    JOIN
+        public.productos p ON vt.id_producto = p.id_producto
+    ORDER BY
+        vt.total_vendido DESC
+),
+top_productos AS (
+    SELECT
+        producto,
+        total_vendido,
+        porcentaje
+    FROM
+        productos_ordenados
+    LIMIT 4
+),
+otros AS (
+    SELECT
+        'Otros' AS producto,
+        COALESCE(SUM(total_vendido), 0) AS total_vendido,
+        COALESCE(SUM(porcentaje), 0) AS porcentaje
+    FROM
+        productos_ordenados
+    WHERE
+        producto NOT IN (SELECT producto FROM top_productos)
+        AND (SELECT COUNT(*) FROM top_productos) > 0
+)
+SELECT
+    producto,
+    total_vendido,
+    ROUND(porcentaje, 2) AS porcentaje
+FROM
+    top_productos
+
+UNION ALL
+
+SELECT
+    producto,
+    total_vendido,
+    ROUND(porcentaje, 2) AS porcentaje
+FROM
+    otros
+WHERE
+    (SELECT COUNT(*) FROM productos_ordenados) > 4
+`;

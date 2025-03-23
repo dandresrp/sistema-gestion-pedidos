@@ -5,6 +5,7 @@ import {
   SQL_GET_PENDING_ORDERS,
   SQL_GET_REJECTED_ORDERS,
   SQL_GET_ORDERS_OUT_OF_TIME,
+  SQL_GET_BEST_SELLING_PRODUCTS_HISTORY,
 } from './sql.js';
 
 export const getOrdersByMonth = async (req, res) => {
@@ -82,5 +83,27 @@ export const getOrdersOutOfTime = async (req, res) => {
   } catch (error) {
     console.error('Error fetching orders out of time:', error);
     res.error('Error al obtener pedidos fuera de tiempo');
+  }
+};
+
+export const getBestSellingProductsHistory = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const result = await query(SQL_GET_BEST_SELLING_PRODUCTS_HISTORY, [
+      startDate || null,
+      endDate || null,
+    ]);
+
+    if (!result.rows || result.rows.length === 0) {
+      return res.success(
+        'No se encontraron productos vendidos en el rango de fechas seleccionado',
+      );
+    }
+
+    res.success(result.rows);
+  } catch (error) {
+    console.error('Error fetching best selling products history:', error);
+    res.error('Error al obtener historial de productos más vendidos');
   }
 };
