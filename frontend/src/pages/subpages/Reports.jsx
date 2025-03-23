@@ -14,7 +14,7 @@ import DetailedReports from "../../components/DetailedReports";
 import SynthetizedReports from "../../components/SynthetizedReports";
 import ReportColumns, { ReportTitles } from "../../utils";
 import ChartComponent from "../../components/ChartComponent";
-import TableComponent from "../../components/tableComponent";
+import TableComponent from "../../components/TableComponent";
 
 const Reports = () => {
   const { reportName, reportType } = useParams();
