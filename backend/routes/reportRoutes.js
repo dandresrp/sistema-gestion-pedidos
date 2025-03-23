@@ -242,4 +242,55 @@ router.get(
   reportController.getBestSellingProductsHistory,
 );
 
+/**
+ * @swagger
+ * /api/reportes/inventory:
+ *   get:
+ *     summary: Obtener inventario de productos
+ *     tags: [Reportes]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de productos más vendidos
+ *       401:
+ *         description: No autorizado
+ *       500:
+ *         description: Error del servidor
+ */
+router.get('/inventory', [authenticateJWT], reportController.getInventory);
+
+/**
+ * @swagger
+ * /api/reportes/production-capacity:
+ *   get:
+ *     summary: Obtener capacidad de producción
+ *     tags: [Reportes]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         description: Fecha de inicio para filtrar productos ('2025-01-01')
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: endDate
+ *         description: Fecha final para filtrar productos ('2025-01-31')
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de capacidad de producción
+ *       401:
+ *         description: No autorizado
+ *       500:
+ *         description: Error del servidor
+ */
+router.get(
+  '/production-capacity',
+  [authenticateJWT, validateDates],
+  reportController.getProductionCapacity,
+);
+
 export default router;

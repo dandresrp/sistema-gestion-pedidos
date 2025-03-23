@@ -247,3 +247,54 @@ FROM
 WHERE
     (SELECT COUNT(*) FROM productos_ordenados) > 4
 `;
+
+export const SQL_GET_INVENTORY = `
+SELECT
+    p.nombre AS nombre_producto,
+    i.entradas,
+    i.salidas,
+    i.stock AS stock_disponible,
+    p.precio AS precio_individual,
+    (i.stock * p.precio) AS total
+FROM
+    public.inventario i
+JOIN
+    public.productos p ON i.id_producto = p.id_producto
+ORDER BY
+    p.nombre ASC
+`;
+
+export const SQL_GET_PRODUCTION_CAPACITY = `
+WITH pedidos_por_mes AS (
+  SELECT
+    DATE_TRUNC('month', fecha_finalizacion) AS mes,
+    COUNT(*) AS pedidos_finalizados
+  FROM
+    public.pedidos
+  WHERE
+    estado = 'Entregado'
+    AND ($1::date IS NULL OR fecha_finalizacion >= $1::date)
+    AND ($2::date IS NULL OR fecha_finalizacion <= $2::date)
+  GROUP BY
+    DATE_TRUNC('month', fecha_finalizacion)
+),
+meses_ordenados AS (
+  SELECT
+    mes,
+    pedidos_finalizados,
+    LAG(pedidos_finalizados) OVER (ORDER BY mes) AS pedidos_mes_anterior
+  FROM
+    pedidos_por_mes
+)
+SELECT
+  TO_CHAR(mes, 'Month YYYY') AS mes,
+  pedidos_finalizados AS pedidos_mes_actual,
+  pedidos_mes_anterior AS pedidos_mes_anterior,
+  ROUND(((pedidos_finalizados - pedidos_mes_anterior) * 100.0) / pedidos_mes_anterior, 2) AS porcentaje_variacion
+FROM
+  meses_ordenados
+WHERE
+  pedidos_mes_anterior IS NOT NULL
+ORDER BY
+  mes
+`;

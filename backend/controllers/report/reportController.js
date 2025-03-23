@@ -6,6 +6,8 @@ import {
   SQL_GET_REJECTED_ORDERS,
   SQL_GET_ORDERS_OUT_OF_TIME,
   SQL_GET_BEST_SELLING_PRODUCTS_HISTORY,
+  SQL_GET_INVENTORY,
+  SQL_GET_PRODUCTION_CAPACITY,
 } from './sql.js';
 
 export const getOrdersByMonth = async (req, res) => {
@@ -105,5 +107,29 @@ export const getBestSellingProductsHistory = async (req, res) => {
   } catch (error) {
     console.error('Error fetching best selling products history:', error);
     res.error('Error al obtener historial de productos más vendidos');
+  }
+};
+
+export const getInventory = async (req, res) => {
+  try {
+    const result = await query(SQL_GET_INVENTORY);
+    res.success(result.rows);
+  } catch (error) {
+    console.error('Error fetching inventory:', error);
+    res.error('Error al obtener el inventario');
+  }
+};
+
+export const getProductionCapacity = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const result = await query(SQL_GET_PRODUCTION_CAPACITY, [
+      startDate || null,
+      endDate || null,
+    ]);
+    res.success(result.rows);
+  } catch (error) {
+    console.error('Error fetching production capacity:', error);
+    res.error('Error al obtener la capacidad de producción');
   }
 };
