@@ -250,6 +250,7 @@ WHERE
 
 export const SQL_GET_INVENTORY = `
 SELECT
+    p.id_producto as id,
     p.nombre AS nombre_producto,
     i.entradas,
     i.salidas,
