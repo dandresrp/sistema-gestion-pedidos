@@ -61,7 +61,7 @@ const Login = () => {
                 onClick={togglePasswordVisibility}
               />
             </div>
-            <button type="submit" disabled={isLoading}>
+            <button type="submit" className="login-button" disabled={isLoading}>
               {isLoading ? "Cargando..." : "Acceder"}
             </button>
           </form>

@@ -1,7 +1,7 @@
 .report-container {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 3px 20px 3px 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   height: 100vh;
   overflow: hidden; /* Evita el scroll en todo el contenedor */
@@ -39,13 +39,14 @@
 }
 
 .report-content {
-  display: flex; /* Convierte en un contenedor flex */
-  flex-direction: row; /* Alinea los gráficos en fila */
-  flex-wrap: wrap; /* Permite que los gráficos se ajusten si no caben */
-  gap: 20px; /* Espacio entre gráficos */
-  justify-content: center; /* Centra los gráficos en la fila */
-  align-items: center; /* Alinea los gráficos al inicio */
-  overflow-x: auto; /* Habilita scroll horizontal si los gráficos son grandes */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
   padding: 10px;
   color: #333;
 }
@@ -53,7 +54,7 @@
 .report-footer {
   text-align: center;
   font-size: 14px;
-  padding: 8px;
+  margin-bottom: 8px;
 }
 
 .report-footer p {

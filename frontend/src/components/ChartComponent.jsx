@@ -16,7 +16,7 @@ import {
 } from "recharts";
 import "../styles/ChartComponent.css";
 
-const COLORS = ["#78A2D9", "#316AB5", "#26528D", "#6084b5", "#173154"];
+const COLORS = ["#173154", "#2B558C", "#2e63ab", "#4E6AA8", "#6181AFFF"];
 
 const ReportChart = ({ type, data, dataKey, lines, barKey, lineKey }) => {
   return (

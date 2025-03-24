@@ -1,40 +1,56 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-// import {
-//   completedOrders,
-//   pendingOrders,
-//   inventoryReport,
-//   delayedOrders,
-//   rejectedOrders,
-//   monthlyIncome,
-//   fetchTopProductosVendidos,
-//   productionCapacity,
-// } from "../../services/BDServices";
+import { useEffect, useState, useCallback } from "react";
 import { reportController } from "../../controllers/reportController";
 import DetailedReports from "../../components/DetailedReports";
 import SynthetizedReports from "../../components/SynthetizedReports";
 import ReportColumns, { ReportTitles } from "../../utils";
 import ChartComponent from "../../components/ChartComponent";
 import TableComponent from "../../components/TableComponent";
+import DatePicker, { registerLocale } from "react-datepicker";
+import es from "date-fns/locale/es";
+import "react-datepicker/dist/react-datepicker.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { forwardRef } from "react";
+
+const CustomDateInput = forwardRef(({ value, onClick, isOpen }, ref) => (
+  <button className="custom-date-button" onClick={onClick} ref={ref}>
+    {value}
+    <FontAwesomeIcon
+      icon={isOpen ? faChevronUp : faChevronDown}
+      className="calendar-icon"
+    />
+  </button>
+));
+
+registerLocale("es", es);
 
 const getFirstDayOfMonth = () => {
   const date = new Date();
-  return new Date(date.getFullYear(), date.getMonth(), 1)
-    .toISOString()
-    .split("T")[0];
+  return new Date(date.getFullYear(), date.getMonth(), 1);
 };
 
-const getToday = () => {
-  return new Date().toISOString().split("T")[0];
+const getToday = () => new Date();
+
+// const formatDisplayDate = (date) => {
+//   return date.toLocaleDateString("es-ES", {
+//     day: "2-digit",
+//     month: "long",
+//     year: "numeric",
+//   });
+// };
+
+const getMonthYear = (date) => {
+  const mes = date.toLocaleDateString("es-ES", { month: "long" });
+  const año = date.getFullYear();
+  return `${mes.toUpperCase()} DE ${año}`;
 };
 
-const formatDisplayDate = (dateStr) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("es-ES", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+const getDynamicTitle = (reportName, endDate) => {
+  if (reportName === "completed-orders") {
+    return `PEDIDOS REALIZADOS EN ${getMonthYear(endDate)}`;
+  }
+  return ReportTitles[reportName] || "REPORTE";
 };
 
 const Reports = () => {
@@ -50,41 +66,51 @@ const Reports = () => {
   const [ReportsTitles, setReportTitles] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [startDate, setStartDate] = useState(getFirstDayOfMonth());
+  const [endDate, setEndDate] = useState(getToday());
+  const [isStartOpen, setIsStartOpen] = useState(false);
+  const [isEndOpen, setIsEndOpen] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   setError(null);
 
-    const fetchReportData = async () => {
+  const fetchReportData = useCallback(
+    async (options = { skipLoading: false }) => {
       try {
+        if (!options.skipLoading) setLoading(true);
+        setError(null);
+
+        // if (startDate > endDate) {
+        //   throw new Error("La fecha de inicio no puede ser mayor a la fecha final");
+        // }
         let type;
         let data;
         let columns = new ReportColumns(reportName).getColumns();
-        let title = ReportTitles[reportName];
+        let title = getDynamicTitle(reportName, endDate);
 
-        const startDate = getFirstDayOfMonth();
-        const endDate = getToday();
+        // const startDate = getFirstDayOfMonth();
+        // const endDate = getToday();
         const offset = 0;
         const limit = 1000;
 
         if (reportType === "detailed") {
           switch (reportName) {
             case "completed-orders": {
-              const ordersResponse = await reportController.getOrdersByMonth(
-                startDate,
-                endDate,
+              const res = await reportController.getOrdersByMonth(
+                startDate.toISOString().split("T")[0],
+                endDate.toISOString().split("T")[0],
                 offset,
                 limit
               );
-              if (!ordersResponse.success)
-                throw new Error(ordersResponse.message);
+              if (!res.success) throw new Error(res.message);
 
               data = {
-                data: ordersResponse.data.map((order) => ({
+                data: res.data.map((order) => ({
                   fecha: new Date(order.fecha).toLocaleDateString(),
                   cliente: order.nombre_cliente,
                   producto: order.productos,
-                  monto: order.total,
+                  monto: parseFloat(order.total || 0).toFixed(2),
                   estado: order.estado,
                   metodo_envio: order.metodo_envio,
                 })),
@@ -93,17 +119,16 @@ const Reports = () => {
             }
 
             case "pending-orders": {
-              const pendingResponse = await reportController.getPendingOrders(
-                startDate,
-                endDate,
+              const res = await reportController.getPendingOrders(
+                startDate.toISOString().split("T")[0],
+                endDate.toISOString().split("T")[0],
                 offset,
                 limit
               );
-              if (!pendingResponse.success)
-                throw new Error(pendingResponse.message);
+              if (!res.success) throw new Error(res.message);
 
               data = {
-                data: pendingResponse.data.map((order) => ({
+                data: res.data.map((order) => ({
                   fechaEntrega: new Date(
                     order.fecha_estimada_entrega
                   ).toLocaleDateString(),
@@ -118,36 +143,34 @@ const Reports = () => {
             }
 
             case "inventory": {
-              const inventoryResponse = await reportController.getInventory();
-              if (!inventoryResponse.success)
-                throw new Error(inventoryResponse.message);
+              const res = await reportController.getInventory();
+              if (!res.success) throw new Error(res.message);
 
               data = {
-                data: inventoryResponse.data.map((item) => ({
-                  id: item.id || "N/A",
+                data: res.data.map((item) => ({
+                  //id: item.id || "N/A",
                   producto: item.nombre_producto,
                   entradas: item.entradas,
                   salidas: item.salidas,
                   stockDisponible: item.stock_disponible,
-                  precio: item.precio_individual,
-                  total: item.total,
+                  precio: parseFloat(item.precio_individual || 0).toFixed(2),
+                  total: parseFloat(item.total || 0).toFixed(2),
                 })),
               };
               break;
             }
 
             case "delayed-orders": {
-              const delayedResponse = await reportController.getOrdersOutOfTime(
-                startDate,
-                endDate,
+              const res = await reportController.getOrdersOutOfTime(
+                startDate.toISOString().split("T")[0],
+                endDate.toISOString().split("T")[0],
                 offset,
                 limit
               );
-              if (!delayedResponse.success)
-                throw new Error(delayedResponse.message);
+              if (!res.success) throw new Error(res.message);
 
               data = {
-                data: delayedResponse.data.map((order) => ({
+                data: res.data.map((order) => ({
                   fechaEstimadaEntrega: new Date(
                     order.fecha_estimada_entrega
                   ).toLocaleDateString(),
@@ -162,17 +185,16 @@ const Reports = () => {
             }
 
             case "rejected-orders": {
-              const rejectedResponse = await reportController.getRejectedOrders(
-                startDate,
-                endDate,
+              const res = await reportController.getRejectedOrders(
+                startDate.toISOString().split("T")[0],
+                endDate.toISOString().split("T")[0],
                 offset,
                 limit
               );
-              if (!rejectedResponse.success)
-                throw new Error(rejectedResponse.message);
+              if (!res.success) throw new Error(res.message);
 
               data = {
-                data: rejectedResponse.data.map((order) => ({
+                data: res.data.map((order) => ({
                   fechaPedido: new Date(
                     order.fecha_del_pedido
                   ).toLocaleDateString(),
@@ -189,37 +211,47 @@ const Reports = () => {
             }
 
             default:
-              throw new Error("Reporte detallado no encontrado");
+              throw new Error("Reporte no encontrado");
           }
 
           setReportData(data.data);
           setReportColumns(columns);
           setReportTitles(title);
         } else if (reportType === "synthetized") {
+          const adjustedStart = new Date(
+            startDate.getFullYear(),
+            startDate.getMonth(),
+            1
+          );
+          const adjustedEnd = new Date(
+            endDate.getFullYear(),
+            endDate.getMonth() + 1,
+            0
+          );
+
           switch (reportName) {
             case "monthly-income": {
               type = "line";
-              const incomeResponse = await reportController.getIncomeByMonth(
-                startDate,
-                endDate
+              const res = await reportController.getIncomeByMonth(
+                startDate.toISOString().split("T")[0],
+                endDate.toISOString().split("T")[0]
               );
-              if (!incomeResponse.success)
-                throw new Error(incomeResponse.message);
+              if (!res.success) throw new Error(res.message);
 
-              const tableData = incomeResponse.data.map((row) => ({
+              const tableData = res.data.map((row) => ({
                 semana: row.semana,
-                marzo: `Lps ${parseFloat(row.mes_actual || 0).toFixed(2)}`,
-                febrero: `Lps ${parseFloat(row.mes_pasado || 0).toFixed(2)}`,
-                enero: `Lps ${parseFloat(row.mes_antepasado || 0).toFixed(2)}`,
+                marzo: parseFloat(row.mes_actual || 0).toFixed(2),
+                febrero: parseFloat(row.mes_pasado || 0).toFixed(2),
+                enero: parseFloat(row.mes_antepasado || 0).toFixed(2),
               }));
 
               const chartData = tableData
                 .filter((row) => row.semana !== "Total")
                 .map((row) => ({
                   name: row.semana,
-                  marzo: parseFloat(row.marzo.replace("Lps ", "")),
-                  febrero: parseFloat(row.febrero.replace("Lps ", "")),
-                  enero: parseFloat(row.enero.replace("Lps ", "")),
+                  marzo: parseFloat(row.marzo.replace("Lps. ", "")),
+                  febrero: parseFloat(row.febrero.replace("Lps. ", "")),
+                  enero: parseFloat(row.enero.replace("Lps. ", "")),
                 }));
 
               setChartData(chartData);
@@ -232,15 +264,13 @@ const Reports = () => {
 
             case "best-selling-products": {
               type = "pie";
-              const productsResponse =
-                await reportController.getBestSellingProductsHistory(
-                  startDate,
-                  endDate
-                );
-              if (!productsResponse.success)
-                throw new Error(productsResponse.message);
+              const res = await reportController.getBestSellingProductsHistory(
+                adjustedStart.toISOString().split("T")[0],
+                adjustedEnd.toISOString().split("T")[0]
+              );
+              if (!res.success) throw new Error(res.message);
 
-              const productData = productsResponse.data.map((item) => ({
+              const productData = res.data.map((item) => ({
                 producto: item.producto,
                 cantidadVendida: parseInt(item.total_vendido),
                 porcentaje: parseFloat(item.porcentaje),
@@ -259,12 +289,12 @@ const Reports = () => {
 
             case "production-capacity": {
               type = "bar-line";
-              const capacityResponse =
-                await reportController.getProductionCapacity();
-              if (!capacityResponse.success)
-                throw new Error(capacityResponse.message);
+              const res = await reportController.getProductionCapacity();
+              adjustedStart.toISOString().split("T")[0];
+              adjustedEnd.toISOString().split("T")[0];
+              if (!res.success) throw new Error(res.message);
 
-              const capacityData = capacityResponse.data.map((item) => ({
+              const capacityData = res.data.map((item) => ({
                 mes: item.mes,
                 pedidosEsteMes: parseInt(item.pedidos_mes_actual),
                 pedidosMesAnterior: parseInt(item.pedidos_mes_anterior),
@@ -280,7 +310,7 @@ const Reports = () => {
             }
 
             default:
-              throw new Error("Reporte sintetizado no encontrado");
+              throw new Error("Reporte no encontrado");
           }
 
           setReportData(data.tableData);
@@ -292,17 +322,30 @@ const Reports = () => {
       } catch (err) {
         setError(`Error al obtener el reporte: ${err.message}`);
       } finally {
-        setLoading(false);
+        if (!options.skipLoading) setLoading(false);
       }
-    };
+    },
+    [reportName, reportType, startDate, endDate]
+  );
 
+  useEffect(() => {
     fetchReportData();
-  }, [reportName, reportType]);
+  }, [fetchReportData]);
 
-  if (loading) {
+  useEffect(() => {
+    fetchReportData({ skipLoading: true });
+  }, [fetchReportData]);
+
+  if (loading && !reportData) {
     return (
-      <div className="loading-container">
-        <p>Cargando reportes...</p>
+      <div
+        className="loading-container"
+        style={{ textAlign: "center", padding: "2rem" }}
+      >
+        <div className="loader"></div>
+        <p style={{ marginTop: "1rem", color: "#3498db" }}>
+          Cargando reportes...
+        </p>
       </div>
     );
   }
@@ -318,7 +361,7 @@ const Reports = () => {
   if (!reportData) {
     return (
       <div className="error-container">
-        <p>No hay datos disponibles para este reporte.</p>
+        <p>No hay datos para mostrar...</p>
       </div>
     );
   }
@@ -326,18 +369,66 @@ const Reports = () => {
   return (
     <div className="container-reports">
       {reportType === "detailed" ? (
-        <DetailedReports
-          data={reportData}
-          columns={ReportsColumns}
-          title={ReportsTitles}
-          date1={formatDisplayDate(getFirstDayOfMonth())}
-          date2={formatDisplayDate(getToday())}
-        />
+        <>
+          <DetailedReports
+            data={reportData}
+            columns={ReportsColumns}
+            title={ReportsTitles}
+            date1={
+              <DatePicker
+                selected={startDate}
+                onChange={setStartDate}
+                dateFormat="dd 'de' MMMM 'de' yyyy"
+                locale="es"
+                onCalendarOpen={() => setIsStartOpen(true)}
+                onCalendarClose={() => setIsStartOpen(false)}
+                customInput={<CustomDateInput isOpen={isStartOpen} />}
+                popperPlacement="bottom-start"
+              />
+            }
+            date2={
+              <DatePicker
+                selected={endDate}
+                onChange={setEndDate}
+                dateFormat="dd 'de' MMMM 'de' yyyy"
+                locale="es"
+                onCalendarOpen={() => setIsEndOpen(true)}
+                onCalendarClose={() => setIsEndOpen(false)}
+                customInput={<CustomDateInput isOpen={isEndOpen} />}
+                popperPlacement="bottom-start"
+              />
+            }
+          />
+        </>
       ) : (
         <SynthetizedReports
           title={ReportsTitles}
-          startDate={formatDisplayDate(getFirstDayOfMonth())}
-          endDate={formatDisplayDate(getToday())}
+          date1={
+            <DatePicker
+              selected={startDate}
+              onChange={setStartDate}
+              dateFormat="MMMM yyyy"
+              showMonthYearPicker
+              locale="es"
+              onCalendarOpen={() => setIsStartOpen(true)}
+              onCalendarClose={() => setIsStartOpen(false)}
+              customInput={<CustomDateInput isOpen={isStartOpen} />}
+              popperPlacement="bottom-start"
+            />
+          }
+          date2={
+            <DatePicker
+              selected={endDate}
+              onChange={setEndDate}
+              dateFormat="MMMM yyyy"
+              showMonthYearPicker
+              locale="es"
+              onCalendarOpen={() => setIsEndOpen(true)}
+              onCalendarClose={() => setIsEndOpen(false)}
+              customInput={<CustomDateInput isOpen={isEndOpen} />}
+              popperPlacement="bottom-start"
+            />
+          }
         >
           {(type == "line" || type == "bar-line") && (
             <TableComponent data={reportData} columns={ReportsColumns} />

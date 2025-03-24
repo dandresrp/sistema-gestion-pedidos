@@ -4,8 +4,8 @@
   align-items: center;
   border-radius: 8px;
   padding: 20px;
-  width: 550px; /* Ajusta el ancho */
-  height: 350px; /* Ajusta la altura */
+  width: 600px;
+  height: 330px;
 }
 
 .responsive-chart {

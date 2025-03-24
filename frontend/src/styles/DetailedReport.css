@@ -9,7 +9,7 @@
 
 .reports-header {
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   position: sticky;
   top: 0;
   padding: 8px 0;
@@ -47,13 +47,217 @@
 
 .report-period {
   flex: 0 0 auto;
-  font-size: 16px;
+  font-size: 14px;
   color: #6991c7;
   text-align: right;
 }
 
-.report-period strong {
+.custom-date-button {
+  all: unset;
+  font-weight: bold;
+  font-size: 14px;
   color: #6991c7;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.custom-date-button:focus {
+  outline: none;
+}
+
+.calendar-icon {
+  font-size: 10px;
+  color: #6991c7;
+}
+/* .report-period strong {
+  color: #6991c7;
+} */
+
+.react-datepicker {
+  font-family: inherit;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #4a90e2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.react-datepicker__header {
+  background-color: white !important;
+  color: #333;
+  border-bottom: 1px solid #4a90e2;
+}
+
+.react-datepicker__navigation {
+  top: 5px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  z-index: 2;
+  color: #4a90e2;
+}
+
+.react-datepicker__navigation:hover {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.react-datepicker__navigation--previous,
+.react-datepicker__navigation--next {
+  line-height: 1;
+  margin: 0 4px;
+}
+
+/* Texto del mes actual */
+.react-datepicker__current-month {
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.react-datepicker__input-container input {
+  display: block;
+  width: 100%;
+  all: unset;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.react-datepicker__input-container input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.2);
+}
+
+.react-datepicker,
+.react-datepicker__day,
+.react-datepicker__day-name,
+.react-datepicker__current-month,
+.react-datepicker__header,
+.react-datepicker__navigation,
+.react-datepicker-time__header,
+.react-datepicker-year-header {
+  color: #333 !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #4a90e2 !important;
+  color: white !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: #dbe6ff;
+  color: #4a90e2 !important;
+}
+
+/* .react-datepicker__navigation--previous,
+.react-datepicker__navigation--next {
+  top: 16px;
+} */
+
+.print-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+@media print {
+  .print-button-container,
+  .pagination {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 20mm 22mm 15mm 10mm;
+  }
+
+  /* body, */
+  .report-container {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: white;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-align: center;
+    color: #000;
+    margin-bottom: 0.5em;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11pt;
+  }
+
+  th {
+    background-color: rebeccapurple;
+    border: 1px solid #999;
+    padding: 4px 8px;
+    text-align: center;
+  }
+  td {
+    border: 1px solid #999;
+    padding: 4px 8px;
+    text-align: left;
+  }
+
+  .report-footer {
+    margin-top: 10px;
+    font-style: italic;
+    font-size: 10pt;
+    color: #333;
+  }
+
+  .report-title {
+    text-align: center !important;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  .report-container,
+  .reports-container {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+}
+
+.print-button-container {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.print-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.print-button:hover {
+  background-color: #42556b;
 }
 
 .table-container {
@@ -61,7 +265,7 @@
   overflow: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   height: calc(90vh - 700px);
 }
 ::-webkit-scrollbar {
@@ -79,7 +283,7 @@
   background-color: #8fa3cc;
   color: #333;
   font-weight: bold;
-  text-align: left;
+  text-align: center;
   padding: 10px 15px;
   border-bottom: 2px solid #ddd;
   position: sticky;
@@ -89,6 +293,7 @@
 
 .reports-table td {
   justify-content: center;
+  text-align: center;
   color: #333;
   padding: 10px 15px;
   border-bottom: 1px solid #ddd;
@@ -145,12 +350,12 @@
   align-items: center;
   margin-top: 0.1em;
   flex-wrap: wrap;
-  margin-bottom: 0.2em;
+  margin-bottom: 0.1em;
   gap: 5px;
 }
 
 .pagination-button {
-  padding: 8px 12px;
+  padding: 7px 11px;
   margin: 0 2px;
   max-width: 40px;
   background-color: #f8f8f8;
@@ -199,9 +404,10 @@
   }
 }
 .report-footer {
+  display: flex;
+  margin-right: auto;
   text-align: center;
   font-size: 14px;
-  padding: 8px;
 }
 
 .report-footer p {

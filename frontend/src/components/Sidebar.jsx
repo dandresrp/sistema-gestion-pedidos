@@ -107,37 +107,37 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
             to="/reports/completed-orders/detailed"
             className="submenu-item"
           >
-            Pedidos realizados
+            Pedidos Completados
           </Link>
           <Link to="/reports/pending-orders/detailed" className="submenu-item">
-            Pedidos pendientes
+            Pedidos Pendientes
           </Link>
           <Link to="/reports/inventory/detailed" className="submenu-item">
-            Reporte de inventario
+            Reporte de Inventario
           </Link>
           <Link to="/reports/delayed-orders/detailed" className="submenu-item">
-            Pedidos retrasados
+            Pedidos Retrasados
           </Link>
           <Link
             to="/reports/monthly-income/synthetized"
             className="submenu-item"
           >
-            Ingresos por mes
+            Ingresos por Mes
           </Link>
           <Link
             to="/reports/best-selling-products/synthetized"
             className="submenu-item"
           >
-            Productos mas vendidos
+            Productos más Vendidos
           </Link>
           <Link
             to="/reports/production-capacity/synthetized"
             className="submenu-item"
           >
-            Capacidad de producción
+            Capacidad de Producción
           </Link>
           <Link to="/reports/rejected-orders/detailed" className="submenu-item">
-            Pedidos rechazados
+            Pedidos Rechazados
           </Link>
         </div>
       </div>

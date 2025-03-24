@@ -7,11 +7,11 @@
 }
 
 .report-table {
-  width: 800px;
+  width: 700px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
 }
 

@@ -6,7 +6,7 @@ class ReportColumns {
         { id: "fecha", header: "Fecha" },
         { id: "cliente", header: "Cliente" },
         { id: "producto", header: "Producto" },
-        { id: "monto", header: "Monto" },
+        { id: "monto", header: "Monto", isCurrency: true },
         { id: "estado", header: "Estado" },
         {
           id: "metodo_envio",
@@ -14,13 +14,13 @@ class ReportColumns {
         },
       ],
       inventory: [
-        { id: "id", header: "ID" },
+        //{ id: "id", header: "ID" },
         { id: "producto", header: "Producto" },
         { id: "entradas", header: "Entradas" },
         { id: "salidas", header: "Salidas" },
         { id: "stockDisponible", header: "Stock Disponible" },
-        { id: "precio", header: "Precio" },
-        { id: "total", header: "Total" },
+        { id: "precio", header: "Precio", isCurrency: true },
+        { id: "total", header: "Total", isCurrency: true },
       ],
       "pending-orders": [
         { id: "fechaEntrega", header: "Fecha de Entrega" },
@@ -45,13 +45,13 @@ class ReportColumns {
         { id: "cliente", header: "Cliente" },
         { id: "producto", header: "Producto" },
         { id: "cantidad", header: "Cantidad" },
-        { id: "motivoRechazo", header: "Motivo de rechazo" },
+        { id: "motivoRechazo", header: "Motivo del rechazo" },
       ],
       "monthly-income": [
         { id: "semana", header: "Semana del mes" },
-        { id: "marzo", header: "MARZO" },
-        { id: "febrero", header: "FEBRERO" },
-        { id: "enero", header: "ENERO" },
+        { id: "marzo", header: "MARZO", isCurrency: true },
+        { id: "febrero", header: "FEBRERO", isCurrency: true },
+        { id: "enero", header: "ENERO", isCurrency: true },
       ],
       "best-selling-products": [
         { id: "producto", header: "Producto" },

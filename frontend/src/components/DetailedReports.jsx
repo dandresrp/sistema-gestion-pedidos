@@ -10,6 +10,7 @@ const Footer = () => {
     </div>
   );
 };
+
 const DetailedReports = ({
   title = "Reporte",
   data = [],
@@ -113,7 +114,30 @@ const DetailedReports = ({
               paginatedData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {tableColumns.map((column) => (
-                    <td key={`${rowIndex}-${column.id}`}>{row[column.id]}</td>
+                    <td key={`${rowIndex}-${column.id}`}>
+                      {column.isCurrency ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                          }}
+                        >
+                          <span>Lps.</span>
+                          <span>
+                            {parseFloat(row[column.id]).toLocaleString(
+                              "es-HN",
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }
+                            )}
+                          </span>
+                        </div>
+                      ) : (
+                        row[column.id]
+                      )}
+                    </td>
                   ))}
                 </tr>
               ))
@@ -180,7 +204,7 @@ const DetailedReports = ({
         </div>
       )}
 
-      {/* ✅ Aquí agregamos el Footer */}
+      {/* Aquí agregamos el Footer */}
       <Footer />
     </div>
   );

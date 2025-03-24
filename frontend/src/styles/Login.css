@@ -73,7 +73,7 @@ input[type="password"] {
   pointer-events: auto;
 }
 
-button {
+.login-button {
   width: 100%;
   padding: 10px 30px;
   margin: 10px 0;
@@ -84,6 +84,6 @@ button {
   font-size: 14px;
 }
 
-button:hover {
+.login-button:hover {
   background: #0056b3;
 }

@@ -38,6 +38,7 @@ const SynthetizedReport = ({
           </div>
         </div>
       </div>
+
       <div className="report-content">{children}</div>
       {/* ✅ Aquí agregamos el Footer */}
       <Footer />
