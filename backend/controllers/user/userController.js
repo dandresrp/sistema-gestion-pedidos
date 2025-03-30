@@ -67,10 +67,6 @@ export const deleteUser = async (req, res) => {
   try {
     const { id_usuario } = req.params;
 
-    if (req.usuario.id_usuario != id_usuario) {
-      return res.error('No tienes permiso para eliminar este usuario', 403);
-    }
-
     await query(SQL_DELETE_USER, [id_usuario]);
 
     res.success(null, 'Usuario eliminado correctamente');
