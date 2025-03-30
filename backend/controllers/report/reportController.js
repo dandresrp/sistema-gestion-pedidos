@@ -1,4 +1,4 @@
-import { query } from '../../db.js';
+import { query } from '../../config/database/db.js';
 import {
   SQL_GET_INCOME_BY_MONTH,
   SQL_GET_ORDERS_BY_MONTH,

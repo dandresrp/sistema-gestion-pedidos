@@ -1,4 +1,4 @@
-import { query } from '../../db.js';
+import { query } from '../../config/database/db.js';
 import {
   SQL_GET_ALL_USERS,
   SQL_GET_USER_BY_ID,

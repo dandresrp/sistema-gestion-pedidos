@@ -1,4 +1,4 @@
-import { query } from '../../db.js';
+import { query } from '../../config/database/db.js';
 import {
   buildUpdateClientSQL,
   SQL_ADD_CLIENT,
