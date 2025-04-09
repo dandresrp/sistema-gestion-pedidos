@@ -29,8 +29,49 @@ export const getOrdersByMonth = async (req, res) => {
 
 export const getIncomeByMonth = async (req, res) => {
   try {
-    const result = await query(SQL_GET_INCOME_BY_MONTH);
-    res.success(result.rows);
+    const { startDate, endDate } = req.query;
+    const result = await query(SQL_GET_INCOME_BY_MONTH, [
+      startDate || null,
+      endDate || null,
+    ]);
+
+    const processedData = result.rows.map(row => {
+      const processedRow = { ...row };
+
+      if (Array.isArray(row.meses_ingresos)) {
+        processedRow.meses_ingresos = row.meses_ingresos.map(monthData => {
+          if (Array.isArray(monthData) && monthData.length >= 2) {
+            const dateStr = monthData[0];
+            const amount = monthData[1];
+
+            // Format the date
+            const date = new Date(dateStr);
+            const monthNames = [
+              'Enero',
+              'Febrero',
+              'Marzo',
+              'Abril',
+              'Mayo',
+              'Junio',
+              'Julio',
+              'Agosto',
+              'Septiembre',
+              'Octubre',
+              'Noviembre',
+              'Diciembre',
+            ];
+            const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+            return [formattedDate, amount];
+          }
+          return monthData;
+        });
+      }
+
+      return processedRow;
+    });
+
+    res.success(processedData);
   } catch (error) {
     console.error('Error fetching income by month:', error);
     res.error('Error al obtener ingresos por mes');
