@@ -112,10 +112,10 @@ export function ManageUsersModal({ onClose }) {
   const confirmDeleteUser = async () => {
     try {
       setLoading(true);
-      const response = await userController.deleteUser(userToDelete.id_usuario);
+      const response = await userController.deleteUser(userToDelete.usuario_id);
 
       if (response.success) {
-        setUsers(users.filter((u) => u.id_usuario !== userToDelete.id_usuario));
+        setUsers(users.filter((u) => u.usuario_id !== userToDelete.usuario_id));
         showToast("Usuario eliminado correctamente");
       } else {
         showToast(response.message || "Error al eliminar usuario", "error");
@@ -166,7 +166,7 @@ export function ManageUsersModal({ onClose }) {
               ) : (
                 <ul className="item-list">
                   {users.map((user) => (
-                    <li key={user.id_usuario} className="list-item">
+                    <li key={user.usuario_id} className="list-item">
                       <div>
                         <strong>{user.nombre_usuario}</strong> ({user.rol}) -{" "}
                         {user.correo}
