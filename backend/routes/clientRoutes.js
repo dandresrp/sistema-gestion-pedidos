@@ -24,15 +24,15 @@ router.get('/', authenticateJWT, clientController.getAllClients);
 
 /**
  * @swagger
- * /api/clientes/{id_cliente}:
+ * /api/clientes/{cliente_id}:
  *   get:
  *     summary: Obtiene un cliente por ID
  *     tags: [Clientes]
  *     parameters:
  *       - in: path
- *         name: id_cliente
+ *         name: cliente_id
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: ID del cliente
  *     security:
@@ -45,7 +45,7 @@ router.get('/', authenticateJWT, clientController.getAllClients);
  *       500:
  *         description: Error del servidor
  */
-router.get('/:id_cliente', authenticateJWT, clientController.getClientById);
+router.get('/:cliente_id', authenticateJWT, clientController.getClientById);
 
 /**
  * @swagger
@@ -60,15 +60,17 @@ router.get('/:id_cliente', authenticateJWT, clientController.getClientById);
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               nombre:
  *                 type: string
- *               email:
+ *               telefono:
  *                 type: string
- *               phone:
+ *               correo:
+ *                 type: string
+ *               direccion:
  *                 type: string
  *             required:
- *               - name
- *               - email
+ *               - nombre
+ *               - telefono
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -85,15 +87,15 @@ router.post('/', [authenticateJWT, authorizeAdmin], clientController.addClient);
 
 /**
  * @swagger
- * /api/clientes/{id_cliente}:
+ * /api/clientes/{cliente_id}:
  *   put:
  *     summary: Actualiza un cliente por ID
  *     tags: [Clientes]
  *     parameters:
  *       - in: path
- *         name: id_cliente
+ *         name: cliente_id
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: ID del cliente
  *     requestBody:
@@ -103,15 +105,17 @@ router.post('/', [authenticateJWT, authorizeAdmin], clientController.addClient);
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               nombre:
  *                 type: string
- *               email:
+ *               telefono:
  *                 type: string
- *               phone:
+ *               correo:
+ *                 type: string
+ *               direccion:
  *                 type: string
  *             required:
- *               - name
- *               - email
+ *               - nombre
+ *               - telefono
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -125,22 +129,22 @@ router.post('/', [authenticateJWT, authorizeAdmin], clientController.addClient);
  *         description: Cliente no encontrado
  */
 router.put(
-  '/:id_cliente',
+  '/:cliente_id',
   [authenticateJWT, authorizeAdmin],
   clientController.updateClient,
 );
 
 /**
  * @swagger
- * /api/clientes/{id_cliente}:
+ * /api/clientes/{cliente_id}:
  *   delete:
  *     summary: Elimina un cliente por ID
  *     tags: [Clientes]
  *     parameters:
  *       - in: path
- *         name: id_cliente
+ *         name: cliente_id
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: ID del cliente
  *     security:
@@ -154,7 +158,7 @@ router.put(
  *         description: Cliente no encontrado
  */
 router.delete(
-  '/:id_cliente',
+  '/:cliente_id',
   [authenticateJWT, authorizeAdmin],
   clientController.deleteClient,
 );

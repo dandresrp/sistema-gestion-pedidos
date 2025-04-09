@@ -1,12 +1,12 @@
-import { query, pool } from '../../db.js';
+import { query, pool } from '../../config/database/db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 export const signUp = async (req, res) => {
   try {
-    const { nombre_usuario, contrasena, nombre, correo, rol } = req.body;
+    const { nombre, nombre_usuario, rol, correo, contrasena } = req.body;
 
-    if (!nombre_usuario || !contrasena || !nombre || !correo || !rol) {
+    if (!nombre || !nombre_usuario || !rol || !correo || !contrasena) {
       return res.error('Todos los campos son requeridos', 400);
     }
 
@@ -28,15 +28,36 @@ export const signUp = async (req, res) => {
         res.error('El usuario ya existe');
       }
 
+      const rolResult = await client.query(
+        'SELECT nombre FROM rol WHERE rol_id = $1',
+        [rol],
+      );
+
+      if (rolResult.rows.length === 0) {
+        throw new Error('Rol no válido');
+      }
+
+      const rolNombre = rolResult.rows[0].nombre;
+      const rolPrefix = rolNombre.charAt(0).toUpperCase();
+
+      const lastIdResult = await client.query(
+        'SELECT usuario_id FROM usuarios WHERE usuario_id LIKE $1 ORDER BY usuario_id DESC LIMIT 1',
+        [`${rolPrefix}%`],
+      );
+
+      let nextNum = 1;
+      if (lastIdResult.rows.length > 0) {
+        const lastId = lastIdResult.rows[0].usuario_id;
+        const lastNum = parseInt(lastId.substring(1), 10);
+        nextNum = lastNum + 1;
+      }
+
+      const nextId = `${rolPrefix}${nextNum.toString().padStart(3, '0')}`;
+
       const hashedPassword = await bcrypt.hash(contrasena, 10);
 
-      const nextIdResult = await client.query(
-        "SELECT nextval('usuarios_id_usuario_seq')",
-      );
-      const nextId = nextIdResult.rows[0].nextval;
-
       await client.query(
-        'INSERT INTO usuarios (id_usuario, nombre, correo, contrasena, rol, nombre_usuario) VALUES ($1, $2, $3, $4, $5, $6)',
+        'INSERT INTO usuarios (usuario_id, nombre, correo, contrasena, rol, nombre_usuario) VALUES ($1, $2, $3, $4, $5, $6)',
         [nextId, nombre, correo, hashedPassword, rol, nombre_usuario],
       );
 
@@ -51,6 +72,9 @@ export const signUp = async (req, res) => {
   } catch (error) {
     if (error.message === 'El usuario ya existe') {
       return res.error('El nombre de usuario ya está registrado', 400);
+    }
+    if (error.message === 'Rol no válido') {
+      return res.error('El rol seleccionado no es válido', 400);
     }
     res.error(
       'Error al registrar el usuario. Por favor, inténtelo de nuevo más tarde.',
@@ -89,7 +113,7 @@ export const signIn = async (req, res) => {
     const token = jwt.sign(
       {
         nombre_usuario: usuario.nombre_usuario,
-        id_usuario: usuario.id_usuario,
+        usuario_id: usuario.usuario_id,
         rol: usuario.rol,
       },
       process.env.JWT_SECRET,
@@ -99,16 +123,16 @@ export const signIn = async (req, res) => {
     );
 
     const refreshToken = jwt.sign(
-      { id_usuario: usuario.id_usuario },
+      { usuario_id: usuario.usuario_id },
       process.env.JWT_REFRESH_SECRET,
       { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN },
     );
 
     await query(
-      'INSERT INTO refresh_tokens (token, user_id, expires_at) VALUES ($1, $2, $3) ON CONFLICT (user_id) DO UPDATE SET token = $1, expires_at = $3',
+      'INSERT INTO refresh_tokens (token, usuario_id, expires_at) VALUES ($1, $2, $3) ON CONFLICT (usuario_id) DO UPDATE SET token = $1, expires_at = $3',
       [
         refreshToken,
-        usuario.id_usuario,
+        usuario.usuario_id,
         new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       ],
     );
@@ -116,7 +140,7 @@ export const signIn = async (req, res) => {
     res.success({
       token,
       refreshToken,
-      id_usuario: usuario.id_usuario,
+      usuario_id: usuario.usuario_id,
     });
   } catch (error) {
     res.error('Error al iniciar sesión');
@@ -134,8 +158,8 @@ export const refreshToken = async (req, res) => {
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
     const tokensResult = await query(
-      'SELECT * FROM refresh_tokens WHERE token = $1 AND user_id = $2 AND expires_at > NOW()',
-      [refreshToken, decoded.id_usuario],
+      'SELECT * FROM refresh_tokens WHERE token = $1 AND usuario_id = $2 AND expires_at > NOW()',
+      [refreshToken, decoded.usuario_id],
     );
     const tokens = tokensResult.rows;
 
@@ -144,8 +168,8 @@ export const refreshToken = async (req, res) => {
     }
 
     const usuariosResult = await query(
-      'SELECT * FROM usuarios WHERE id_usuario = $1',
-      [decoded.id_usuario],
+      'SELECT * FROM usuarios WHERE usuario_id = $1',
+      [decoded.usuario_id],
     );
     const usuarios = usuariosResult.rows;
 
@@ -158,7 +182,7 @@ export const refreshToken = async (req, res) => {
     const newToken = jwt.sign(
       {
         nombre_usuario: usuario.nombre_usuario,
-        id_usuario: usuario.id_usuario,
+        usuario_id: usuario.usuario_id,
         rol: usuario.rol,
       },
       process.env.JWT_SECRET,

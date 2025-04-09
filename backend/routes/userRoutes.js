@@ -45,12 +45,19 @@ router.get('/:id_usuario', authenticateJWT, userController.getUserById);
 
 /**
  * @swagger
- * /api/usuarios:
+ * /api/usuarios/{id_usuario}:
  *   put:
  *     summary: Actualizar un usuario
  *     tags: [Usuarios]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id_usuario
+ *         required: true
+ *         description: ID del usuario a actualizar
+ *         schema:
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -58,11 +65,13 @@ router.get('/:id_usuario', authenticateJWT, userController.getUserById);
  *           schema:
  *             type: object
  *             properties:
+ *               nombre_usuario:
+ *                 type: string
+ *               contrasena:
+ *                 type: string
  *               nombre:
  *                 type: string
- *               email:
- *                 type: string
- *               password:
+ *               correo:
  *                 type: string
  *               rol:
  *                 type: string
@@ -82,7 +91,7 @@ router.put(
 
 /**
  * @swagger
- * /api/usuarios:
+ * /api/usuarios/{id_usuario}:
  *   delete:
  *     summary: Eliminar un usuario
  *     tags: [Usuarios]

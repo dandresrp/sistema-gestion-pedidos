@@ -1,4 +1,4 @@
-import { query } from '../../db.js';
+import { query } from '../../config/database/db.js';
 import {
   SQL_GET_ALL_USERS,
   SQL_GET_USER_BY_ID,
@@ -66,10 +66,6 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id_usuario } = req.params;
-
-    if (req.usuario.id_usuario != id_usuario) {
-      return res.error('No tienes permiso para eliminar este usuario', 403);
-    }
 
     await query(SQL_DELETE_USER, [id_usuario]);
 
