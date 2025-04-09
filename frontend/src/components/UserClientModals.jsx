@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../styles/UserClientModals.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 
 export function ManageUsersModal({ onClose }) {
   const [activeTab, setActiveTab] = useState("ver");
@@ -34,6 +36,7 @@ export function ManageUsersModal({ onClose }) {
   const [toastType, setToastType] = useState("exito");
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const showToast = (text, tipo = "exito") => {
     setToastMessage(text);
@@ -47,6 +50,10 @@ export function ManageUsersModal({ onClose }) {
 
   const handleAddUser = () => {
     const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUser.correo);
+    const contraseñaValida =
+      /^(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|\\:;"'<>,.?/~`]).{8,}$/.test(
+        newUser.contrasena
+      );
 
     if (
       !newUser.nombre ||
@@ -61,6 +68,14 @@ export function ManageUsersModal({ onClose }) {
 
     if (!correoValido) {
       showToast("El correo electrónico no es válido.", "error");
+      return;
+    }
+
+    if (!contraseñaValida) {
+      showToast(
+        "La contraseña debe tener al menos 8 caracteres, incluir un número y un símbolo especial.",
+        "error"
+      );
       return;
     }
 
@@ -162,15 +177,23 @@ export function ManageUsersModal({ onClose }) {
                   }
                   required
                 />
-                <input
-                  type="password"
-                  placeholder="Contraseña"
-                  value={newUser.contrasena}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, contrasena: e.target.value })
-                  }
-                  required
-                />
+                <div className="password-container">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Contraseña"
+                    value={newUser.contrasena}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, contrasena: e.target.value })
+                    }
+                    required
+                  />
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    className="password-icon"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                </div>
+
                 <input
                   type="text"
                   placeholder="Rol"
@@ -282,7 +305,7 @@ export function ManageClientsModal({ onClose }) {
 
     if (!telefonoValido) {
       showToast(
-        "El número debe tener 8 dígitos y comenzar con 9, 8 o 3.",
+        "El número debe tener 8 dígitos y comenzar con 9, 8, 3 o 2.",
         "error"
       );
       return;

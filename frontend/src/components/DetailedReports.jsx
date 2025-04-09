@@ -124,7 +124,7 @@ const DetailedReports = ({
                     <td
                       key={`${rowIndex}-${column.id}`}
                       style={{
-                        textAlign: "center", // mantenemos todo centrado a nivel celda
+                        textAlign: "center",
                         padding: "0.5rem",
                       }}
                     >
