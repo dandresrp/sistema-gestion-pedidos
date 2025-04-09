@@ -182,7 +182,7 @@ export function ManageUsersModal({ onClose }) {
                   {users.map((user) => (
                     <li key={user.usuario_id} className="list-item">
                       <div>
-                        <strong>{user.nombre_usuario}</strong> ({user.rol}) -{" "}
+                        <strong>{user.nombre}</strong> ({user.rol}) -{" "}
                         {user.correo}
                       </div>
                       <button
