@@ -11,6 +11,7 @@ import roleRoutes from './routes/roleRoutes.js';
 import valueRoutes from './routes/valueRoutes.js';
 import stagesRoutes from './routes/stagesRoutes.js';
 import shippingMethodsRoutes from './routes/shippingMethodsRouter.js';
+import orderRoutes from './routes/orderRoutes.js';
 import { responseHandler } from './middlewares/responseHandler.js';
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/valores', valueRoutes);
 app.use('/api/estados', stagesRoutes);
 app.use('/api/metodos-de-envio', shippingMethodsRoutes);
+app.use('/api/pedidos', orderRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor ejecutándose en: http://localhost:${port}`);
