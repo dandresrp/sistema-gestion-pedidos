@@ -6,21 +6,21 @@ import {
 } from "../../components/UserClientModals";
 
 export default function Dashboard() {
-  const resumen = {
-    totalPedidos: 120,
-    pedidosHoy: 8,
-    totalClientes: 57,
-    totalUsuarios: 12,
-  };
+  // const resumen = {
+  //   totalPedidos: 120,
+  //   pedidosHoy: 8,
+  //   totalClientes: 57,
+  //   totalUsuarios: 12,
+  // };
 
   const [showUsersModal, setShowUsersModal] = useState(false);
   const [showClientsModal, setShowClientsModal] = useState(false);
 
   return (
     <div className="dashboard">
-      <h1>Dashboard</h1>
+      <h1>Inicio</h1>
 
-      <div className="resumen-cards">
+      {/* <div className="resumen-cards">
         <div className="card">
           <h3>Pedidos Hoy</h3>
           <p>{resumen.pedidosHoy}</p>
@@ -33,7 +33,7 @@ export default function Dashboard() {
           <h3>Total Usuarios</h3>
           <p>{resumen.totalUsuarios}</p>
         </div>
-      </div>
+      </div> */}
 
       <div className="gestion-section">
         <div className="gestion-card" onClick={() => setShowUsersModal(true)}>

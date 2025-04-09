@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/UserClientModals.css";
 
 export function ManageUsersModal({ onClose }) {
   const [activeTab, setActiveTab] = useState("ver");
@@ -20,6 +21,7 @@ export function ManageUsersModal({ onClose }) {
       nombre_usuario: "cramirez",
     },
   ]);
+
   const [newUser, setNewUser] = useState({
     nombre: "",
     correo: "",
@@ -28,14 +30,50 @@ export function ManageUsersModal({ onClose }) {
     nombre_usuario: "",
   });
 
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("exito");
+  const [isToastVisible, setIsToastVisible] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+
+  const showToast = (text, tipo = "exito") => {
+    setToastMessage(text);
+    setToastType(tipo);
+    setIsToastVisible(true);
+    setTimeout(() => {
+      setIsToastVisible(false);
+      setToastMessage("");
+    }, 3000);
+  };
+
   const handleAddUser = () => {
+    const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUser.correo);
+
     if (
       !newUser.nombre ||
       !newUser.correo ||
+      !newUser.contrasena ||
       !newUser.rol ||
       !newUser.nombre_usuario
-    )
+    ) {
+      showToast("Todos los campos deben estar completos.", "error");
       return;
+    }
+
+    if (!correoValido) {
+      showToast("El correo electrónico no es válido.", "error");
+      return;
+    }
+
+    const nombreUsuarioExiste = users.some(
+      (u) =>
+        u.nombre_usuario.toLowerCase() === newUser.nombre_usuario.toLowerCase()
+    );
+
+    if (nombreUsuarioExiste) {
+      showToast("Ese nombre de usuario ya existe.", "error");
+      return;
+    }
+
     const updated = [...users, { ...newUser, id_usuario: Date.now() }];
     setUsers(updated);
     setNewUser({
@@ -45,17 +83,25 @@ export function ManageUsersModal({ onClose }) {
       rol: "",
       nombre_usuario: "",
     });
+    showToast("Usuario agregado exitosamente");
   };
 
-  const handleDeleteUser = (id) => {
-    const confirmar = window.confirm("¿Eliminar este usuario?");
-    if (!confirmar) return;
-    setUsers(users.filter((u) => u.id_usuario !== id));
+  const confirmDeleteUser = () => {
+    setUsers(users.filter((u) => u.id_usuario !== userToDelete.id_usuario));
+    setUserToDelete(null);
+  };
+
+  const cancelDeleteUser = () => {
+    setUserToDelete(null);
+  };
+
+  const handleDeleteUser = (user) => {
+    setUserToDelete(user);
   };
 
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div className="modal-content">
         <div className="modal-description">
           <h2>Gestionar Usuarios</h2>
 
@@ -84,7 +130,7 @@ export function ManageUsersModal({ onClose }) {
                       {user.correo}
                     </div>
                     <button
-                      onClick={() => handleDeleteUser(user.id_usuario)}
+                      onClick={() => handleDeleteUser(user)}
                       className="delete-button"
                     >
                       Eliminar
@@ -97,7 +143,7 @@ export function ManageUsersModal({ onClose }) {
 
           {activeTab === "agregar" && (
             <>
-              <div className="form-grid">
+              <div className="form-container">
                 <input
                   type="text"
                   placeholder="Nombre"
@@ -105,6 +151,7 @@ export function ManageUsersModal({ onClose }) {
                   onChange={(e) =>
                     setNewUser({ ...newUser, nombre: e.target.value })
                   }
+                  required
                 />
                 <input
                   type="email"
@@ -113,6 +160,7 @@ export function ManageUsersModal({ onClose }) {
                   onChange={(e) =>
                     setNewUser({ ...newUser, correo: e.target.value })
                   }
+                  required
                 />
                 <input
                   type="password"
@@ -121,6 +169,7 @@ export function ManageUsersModal({ onClose }) {
                   onChange={(e) =>
                     setNewUser({ ...newUser, contrasena: e.target.value })
                   }
+                  required
                 />
                 <input
                   type="text"
@@ -129,14 +178,19 @@ export function ManageUsersModal({ onClose }) {
                   onChange={(e) =>
                     setNewUser({ ...newUser, rol: e.target.value })
                   }
+                  required
                 />
                 <input
                   type="text"
                   placeholder="Nombre de usuario"
                   value={newUser.nombre_usuario}
                   onChange={(e) =>
-                    setNewUser({ ...newUser, nombre_usuario: e.target.value })
+                    setNewUser({
+                      ...newUser,
+                      nombre_usuario: e.target.value,
+                    })
                   }
+                  required
                 />
               </div>
               <div className="form-actions">
@@ -154,6 +208,29 @@ export function ManageUsersModal({ onClose }) {
           </div>
         </div>
       </div>
+
+      {userToDelete && (
+        <div className="modal-overlay">
+          <div className="modal-confirm">
+            <p>
+              ¿Desea eliminar al usuario{" "}
+              <strong>{userToDelete.nombre_usuario}</strong>?
+            </p>
+            <div className="modal-actions">
+              <button className="guardar-button" onClick={confirmDeleteUser}>
+                Sí, eliminar
+              </button>
+              <button className="cancelar-button" onClick={cancelDeleteUser}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isToastVisible && (
+        <div className={`toast ${toastType}`}>{toastMessage}</div>
+      )}
     </div>
   );
 }
@@ -184,15 +261,22 @@ export function ManageClientsModal({ onClose }) {
     direccion: "",
   });
 
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("exito");
+  const [isToastVisible, setIsToastVisible] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState(null);
+
   const handleAddClient = () => {
     const telefonoValido = /^[983]\d{7}$/.test(newClient.telefono);
     const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newClient.correo);
 
-    if (!newClient.nombre || !newClient.telefono || !newClient.correo) {
-      showToast(
-        "Todos los campos obligatorios deben estar completos.",
-        "error"
-      );
+    if (
+      !newClient.nombre ||
+      !newClient.telefono ||
+      !newClient.correo ||
+      !newClient.direccion
+    ) {
+      showToast("Por favor complete los campos.", "error");
       return;
     }
 
@@ -214,15 +298,35 @@ export function ManageClientsModal({ onClose }) {
     setNewClient({ nombre: "", telefono: "", correo: "", direccion: "" });
   };
 
-  const handleDeleteClient = (id) => {
-    const confirmar = window.confirm("¿Eliminar este cliente?");
-    if (!confirmar) return;
-    setClients(clients.filter((c) => c.id_cliente !== id));
+  const handleDeleteClient = (client) => {
+    setClientToDelete(client);
+  };
+
+  const confirmDeleteClient = () => {
+    setClients(
+      clients.filter((c) => c.id_cliente !== clientToDelete.id_cliente)
+    );
+    setClientToDelete(null);
+    showToast("Cliente eliminado correctamente");
+  };
+
+  const cancelDeleteClient = () => {
+    setClientToDelete(null);
+  };
+
+  const showToast = (text, tipo = "exito") => {
+    setToastMessage(text);
+    setToastType(tipo);
+    setIsToastVisible(true);
+    setTimeout(() => {
+      setIsToastVisible(false);
+      setToastMessage("");
+    }, 3000);
   };
 
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div className="modal-content">
         <div className="modal-description">
           <h2>Gestionar Clientes</h2>
 
@@ -253,7 +357,7 @@ export function ManageClientsModal({ onClose }) {
                       <small>{client.direccion}</small>
                     </div>
                     <button
-                      onClick={() => handleDeleteClient(client.id_cliente)}
+                      onClick={() => handleDeleteClient(client)}
                       className="delete-button"
                     >
                       Eliminar
@@ -266,7 +370,7 @@ export function ManageClientsModal({ onClose }) {
 
           {activeTab === "agregar" && (
             <>
-              <div className="form-grid">
+              <div className="form-container">
                 <input
                   type="text"
                   placeholder="Nombre"
@@ -274,6 +378,7 @@ export function ManageClientsModal({ onClose }) {
                   onChange={(e) =>
                     setNewClient({ ...newClient, nombre: e.target.value })
                   }
+                  required
                 />
                 <input
                   type="text"
@@ -282,6 +387,7 @@ export function ManageClientsModal({ onClose }) {
                   onChange={(e) =>
                     setNewClient({ ...newClient, telefono: e.target.value })
                   }
+                  required
                 />
                 <input
                   type="email"
@@ -290,14 +396,20 @@ export function ManageClientsModal({ onClose }) {
                   onChange={(e) =>
                     setNewClient({ ...newClient, correo: e.target.value })
                   }
+                  required
                 />
                 <textarea
                   placeholder="Dirección"
+                  maxLength={100}
                   value={newClient.direccion}
                   onChange={(e) =>
                     setNewClient({ ...newClient, direccion: e.target.value })
                   }
+                  required
                 />
+                <div className="char-counter">
+                  {newClient.direccion.length}/100 caracteres
+                </div>
               </div>
               <div className="form-actions">
                 <button onClick={handleAddClient} className="save-button">
@@ -314,6 +426,29 @@ export function ManageClientsModal({ onClose }) {
           </div>
         </div>
       </div>
+
+      {clientToDelete && (
+        <div className="modal-overlay">
+          <div className="modal-confirm">
+            <p>
+              ¿Deseás eliminar al cliente{" "}
+              <strong>{clientToDelete.nombre}</strong>?
+            </p>
+            <div className="modal-actions">
+              <button className="guardar-button" onClick={confirmDeleteClient}>
+                Sí, eliminar
+              </button>
+              <button className="cancelar-button" onClick={cancelDeleteClient}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isToastVisible && (
+        <div className={`toast ${toastType}`}>{toastMessage}</div>
+      )}
     </div>
   );
 }

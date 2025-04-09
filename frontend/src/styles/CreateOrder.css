@@ -21,7 +21,7 @@
   padding: 2rem;
   color: #494949;
   border-radius: 6px;
-  width: 900px;
+  width: 1000px;
   max-width: 100%;
   max-height: 90vh;
   gap: 1rem;
@@ -46,7 +46,6 @@
 .modal-info {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
   margin: 0;
   padding: 0;
 }
@@ -81,6 +80,7 @@
   flex-direction: column;
   padding: 0.5rem 2rem;
   width: 400px;
+  gap: 0.8rem;
 }
 
 .form-row {
@@ -110,7 +110,6 @@
   outline: none;
   background-color: white;
   color: #474747;
-  width: 250px;
   margin-top: 0.25rem;
   padding: 6px 8px;
   border: 1px solid #ccc;
@@ -140,8 +139,8 @@
 }
 
 .datepicker {
-  all: unset;
-  width: 250px !important;
+  all: unset ;
+  width: 240px !important;
   padding: 0;
   font-size: 1rem;
   border-radius: 6px;
@@ -149,7 +148,7 @@
   box-sizing: border-box;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.2s ease;
-  flex: 1;
+  text-align: center;
 }
 
 .datepicker:focus {
@@ -171,7 +170,6 @@
   display: flex;
   justify-content: center;
   margin-top: 1rem;
-  margin-left: 80px;
 }
 
 .add-item-button {
@@ -179,6 +177,7 @@
   justify-content: center;
   align-items: center;
   color: white;
+  background-color: #474747;
   border: none;
   border-radius: 6px;
   font-size: 1.2rem;
@@ -228,9 +227,6 @@ input[type="number"]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-input[type="number"] {
-  -moz-appearance: textfield;
-}
 
 .mensaje-popup {
   margin-top: 0.8rem;

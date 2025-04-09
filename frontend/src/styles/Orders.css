@@ -79,6 +79,12 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
+.estado-select:focus {
+  outline: none;
+  border-color: #3674c7;
+  box-shadow: 0 0 5px rgba(54, 116, 199, 0.5);
+}
+
 .agregar-button {
   background-color: #3674c7;
   color: white;
@@ -94,11 +100,12 @@
 }
 
 .order-table-container {
-  flex-grow: 1 1 auto;
-  overflow-y: auto;
+  flex-grow: 1;
+  overflow: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  max-height: 65vh;
-  margin-bottom: 1rem;
+  margin-bottom: 14px;
+  height: calc(90vh - 700px);
 }
 
 .orders-table {
@@ -113,7 +120,7 @@
   font-size: 17px;
   padding: 0.75rem;
   border-bottom: 1px solid #ddd;
-  text-align: left;
+  text-align: center;
   color: #26528d;
   background-color: #ebf1f9;
 }
@@ -121,7 +128,7 @@
 .orders-table td {
   padding: 0.75rem;
   border-bottom: 1px solid #ddd;
-  text-align: left;
+  text-align: center;
   color: #26528d;
   font-size: 15px;
 }
@@ -368,14 +375,12 @@
 }
 
 .pagination {
-  flex-shrink: 0;
-
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 0.1em;
-  margin-bottom: 0.1em;
   flex-wrap: wrap;
+  margin-bottom: 0.1em;
   gap: 5px;
 }
 

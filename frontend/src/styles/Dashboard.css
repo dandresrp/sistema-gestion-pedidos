@@ -8,6 +8,11 @@
 h1 {
   margin-bottom: 2rem;
   text-align: center;
+  color: #1e406d;
+}
+
+h2 {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .resumen-cards {
@@ -38,16 +43,18 @@ h1 {
 }
 
 .gestion-card {
-  flex: 1 1 300px;
-  background-color: #e8f0fe;
+  flex: 1 1 200px;
+  background-color: #32529c;
+  color: #f0f4ff;
   padding: 2rem;
   border-radius: 12px;
   cursor: pointer;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   transition: background-color 0.3s ease;
 }
 
 .gestion-card:hover {
-  background-color: #d2e3fc;
+  background-color: #78a2d9;
+  color: #26528d;
 }

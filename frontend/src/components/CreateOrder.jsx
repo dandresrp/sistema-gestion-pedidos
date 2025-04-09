@@ -13,7 +13,7 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
     total: "",
     notas: "",
     metodo_envio: "",
-    fecha_estimada_entrega: null,
+    fecha_estimada_entrega: new Date(Date.now() + 86400000),
     hora_estimada_entrega: "",
   });
 
@@ -24,10 +24,41 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
     { id_usuario: 4, nombre_usuario: "Jorge Paredes" },
   ]);
 
+  const [clientes] = useState([
+    { id_usuario: 1, nombre_usuario: "Helena Rodríguez" },
+    { id_usuario: 2, nombre_usuario: "Carlos Vasquez" },
+    { id_usuario: 3, nombre_usuario: "Adely Tosi" },
+    { id_usuario: 4, nombre_usuario: "Chiva Coquein" },
+    { id_usuario: 5, nombre_usuario: "Leticia García" },
+    { id_usuario: 6, nombre_usuario: "María Rodríguez" },
+    { id_usuario: 7, nombre_usuario: "Juan Gómez" },
+    { id_usuario: 8, nombre_usuario: "Sofía Sánchez" },
+    { id_usuario: 9, nombre_usuario: "Pablo López" },
+    { id_usuario: 10, nombre_usuario: "María Díaz" },
+    { id_usuario: 11, nombre_usuario: "Cristina Sánchez" },
+    { id_usuario: 12, nombre_usuario: "Jesús Pérez" },
+    { id_usuario: 13, nombre_usuario: "María Gómez" },
+    { id_usuario: 14, nombre_usuario: "Juan Carlos Sánchez" },
+    { id_usuario: 15, nombre_usuario: "María Elena Rodríguez" },
+    { id_usuario: 16, nombre_usuario: "Jorge Luis Gómez" },
+    { id_usuario: 17, nombre_usuario: "María del Carmen López" },
+    { id_usuario: 18, nombre_usuario: "Juan Antonio Díaz" },
+    { id_usuario: 19, nombre_usuario: "María de los Ángeles Sánchez" },
+    { id_usuario: 20, nombre_usuario: "Jorge Alberto Gómez" },
+  ]);
+
   const [productosPedido, setProductosPedido] = useState([]);
   const [productoActual, setProductoActual] = useState({
-    producto: "",
-    cantidad: "",
+    producto: "Camisa",
+    cantidad: "1",
+  });
+
+  const [productoEsp, setProductoEsp] = useState({
+    talla: "S",
+    color: "Verde",
+    estilo: "Normal",
+    forma: "Corazon",
+    material: "Metal",
   });
 
   const handleChange = (e) => {
@@ -38,6 +69,19 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
   const handleProductoChange = (e) => {
     const { name, value } = e.target;
     setProductoActual({ ...productoActual, [name]: value });
+
+    setProductoEsp({
+      talla: "S",
+      color: "Verde",
+      estilo: "Normal",
+      forma: "Corazon",
+      material: "Metal",
+    });
+  };
+
+  const handleEspChange = (e) => {
+    const { name, value } = e.target;
+    setProductoEsp({ ...productoEsp, [name]: value });
   };
 
   const agregarProducto = () => {
@@ -61,22 +105,23 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
       {
         producto: productoActual.producto,
         cantidad: cantidadNum,
+        esp: productoEsp,
       },
     ]);
 
-    setProductoActual({ producto: "", cantidad: "" });
+    setProductoEsp({
+      talla: "S",
+      color: "Verde",
+      estilo: "Normal",
+      forma: "Corazon",
+      material: "Metal",
+    });
+
+    setProductoActual({ producto: "Camisa", cantidad: "1" });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // const cantidadNum = Number(productoActual.cantidad);
-
-    // const hayProductoEnInput =
-    //   productoActual.producto &&
-    //   productoActual.cantidad &&
-    //   !isNaN(cantidadNum) &&
-    //   cantidadNum > 0;
 
     const hayProductosEnLista = productosPedido.length > 0;
 
@@ -151,10 +196,12 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
                     onChange={handleChange}
                     required
                   >
-                    <option value=""></option>
-                    {["Pedro", "Juan", "María", "Ana", "Luis"].map((nombre) => (
-                      <option key={nombre} value={nombre}>
-                        {nombre}
+                    {clientes.map((cliente) => (
+                      <option
+                        key={cliente.id_cliente}
+                        value={cliente.id_usuario}
+                      >
+                        {cliente.nombre_usuario}
                       </option>
                     ))}
                   </select>
@@ -168,7 +215,6 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
                     onChange={handleChange}
                     required
                   >
-                    <option value=""></option>
                     {usuarios.map((usuario) => (
                       <option
                         key={usuario.id_usuario}
@@ -213,7 +259,6 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
                     onChange={handleChange}
                     required
                   >
-                    <option value=""></option>
                     <option value="Cargo Express">Cargo Express</option>
                     <option value="N/A">N/A</option>
                   </select>
@@ -243,7 +288,6 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
                     onChange={handleChange}
                     required
                   >
-                    <option value=""></option>
                     {validTime().map((hora) => (
                       <option key={hora} value={hora}>
                         {hora}
@@ -261,8 +305,7 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
                     value={productoActual.producto}
                     onChange={handleProductoChange}
                   >
-                    <option value=""></option>
-                    {["Mouse", "Teclado", "Monitor", "Laptop"].map((item) => (
+                    {["Camisa", "Gorra", "Llavero", "Taza"].map((item) => (
                       <option key={item} value={item}>
                         {item}
                       </option>
@@ -291,6 +334,96 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
                     step="1"
                   />
                 </div>
+                {/*----------------------------------------------------------- */}
+                {productoActual.producto === "Camisa" ||
+                productoActual.producto === "Gorra" ? (
+                  <div style={{ display: "flex", width: "55%", gap: "1rem" }}>
+                    {productoActual.producto === "Camisa" ? (
+                      <div className="form-row">
+                        <label>Talla </label>
+                        <select
+                          name="talla"
+                          value={productoEsp.talla}
+                          onChange={handleEspChange}
+                        >
+                          <option disabled>Seleccione una talla</option>
+                          {["S", "M", "X", "L", "XXL"].map((item) => (
+                            <option key={item} value={item}>
+                              {item}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : null}
+
+                    <div className="form-row">
+                      <label>Color </label>
+                      <select
+                        name="color"
+                        value={productoEsp.color}
+                        onChange={handleEspChange}
+                      >
+                        {["Verde", "Azul", "Negro", "Blanco", "Rojo"].map(
+                          (item) => (
+                            <option key={item} value={item}>
+                              {item}
+                            </option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                  </div>
+                ) : null}
+                {productoActual.producto === "Taza" ? (
+                  <div className="form-row">
+                    <label>Estilo </label>
+                    <select
+                      name="Estilo"
+                      value={productoEsp.estilo}
+                      onChange={handleEspChange}
+                    >
+                      {["Normal", "Magico"].map((item) => (
+                        <option key={item} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : null}
+                {productoActual.producto === "Llavero" ? (
+                  <div style={{ display: "flex", width: "55%", gap: "1rem" }}>
+                    <div className="form-row">
+                      <label>Forma </label>
+                      <select
+                        name="forma"
+                        value={productoEsp.forma}
+                        onChange={handleEspChange}
+                      >
+                        {["Corazon", "Circular", "Rectangular"].map((item) => (
+                          <option key={item} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-row">
+                      <label>Material </label>
+                      <select
+                        name="material"
+                        value={productoEsp.material}
+                        onChange={handleEspChange}
+                      >
+                        {["Metal", "Plastico", "Madera"].map((item) => (
+                          <option key={item} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/*----------------------------------------------------------- */}
                 <div className="add-item-container">
                   <button
                     type="button"
@@ -300,13 +433,45 @@ function CreateOrder({ onClose, onSubmit, showToast }) {
                     +
                   </button>
                 </div>
-
                 <div className="product-list">
                   {productosPedido.length > 0 && (
                     <ul>
                       {productosPedido.map((item, index) => (
                         <li key={index}>
-                          {item.producto} - {item.cantidad}
+                          {item.producto} - {item.cantidad} -{" "}
+                          {Object.entries(item.esp)
+                            .filter(([key, value]) => {
+                              // Solo mostrar las especificaciones que sean relevantes para el producto
+                              if (item.producto === "Gorra" && key === "talla")
+                                return false;
+                              if (
+                                item.producto === "Camisa" &&
+                                (key === "estilo" ||
+                                  key === "forma" ||
+                                  key === "material")
+                              )
+                                return false;
+                              if (
+                                item.producto === "Taza" &&
+                                (key === "talla" ||
+                                  key === "color" ||
+                                  key === "forma" ||
+                                  key === "material")
+                              )
+                                return false;
+                              if (
+                                item.producto === "Llavero" &&
+                                (key === "talla" ||
+                                  key === "color" ||
+                                  key === "estilo")
+                              )
+                                return false;
+
+                              // Mostrar solo especificaciones que no estén vacías
+                              return value !== "";
+                            })
+                            .map(([key, value]) => `${key}: ${value}`)
+                            .join(", ")}
                         </li>
                       ))}
                     </ul>

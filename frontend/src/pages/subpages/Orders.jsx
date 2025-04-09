@@ -23,15 +23,22 @@ export default function Orders() {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
 
-  const statuses = ["en espera", "creado", "en proceso", "enviado"];
+  const statuses = [
+    "Creado",
+    "En Espera",
+    "En Producción",
+    "Entregado",
+    "Listo",
+    "Rechazado",
+  ];
   const metodoEnvioOptions = ["Cargo Express", "N/A"];
 
   useEffect(() => {
     const baseOrders = [
       {
         client: "Juan Pérez",
-        total: 100,
-        status: "en espera",
+        total: 100.0,
+        status: "En Espera",
         date: "2025-04-01T10:00:00Z",
         entrega: "2025-04-08",
         usuario: "Lucía Gómez",
@@ -43,8 +50,8 @@ export default function Orders() {
       },
       {
         client: "Laura Gómez",
-        total: 200,
-        status: "en proceso",
+        total: 200.0,
+        status: "En Producción",
         date: "2025-04-03T16:30:00Z",
         entrega: "2025-04-10",
         usuario: "Carlos Ramírez",
@@ -122,10 +129,13 @@ export default function Orders() {
 
   const isValidTransition = (from, to) => {
     if (from === to) return true;
-    if (from === "creado" && to === "en proceso") return true;
-    if (from === "en proceso" && to === "enviado") return true;
-    if (from === "en espera" && to === "en proceso") return true;
-    if (from === "creado" && ["en espera", "en proceso"].includes(to))
+    // if (from === "Creado" && to === "En Producción") return true;
+    // if (from === "Creado" && to === "En Espera") return true;
+    if (from === "En Producción" && to === "Listo") return true;
+    if (from === "En Producción" && to === "En Espera") return true;
+    if (from === "En Espera" && to === "En Producción") return true;
+    if (from === "Entregado" && to === "Rechazado") return true;
+    if (from === "Creado" && ["En Espera", "En Producción"].includes(to))
       return true;
     return false;
   };
@@ -287,23 +297,31 @@ export default function Orders() {
                 <td>{order.id}</td>
                 <td>{order.client}</td>
                 <td>{order.status}</td>
-                <td>${order.total}</td>
+                <td>Lps. {order.total.toFixed(2)}</td>
                 <td>{new Date(order.date).toLocaleDateString()}</td>
                 <td>{new Date(order.entrega).toLocaleDateString()}</td>
                 <td className="acciones-cell">
-                  <button
-                    className="ver-button"
-                    onClick={() => openModal(order)}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      width: "100%",
+                    }}
                   >
-                    Ver Detalles
-                  </button>
-                  <button
-                    className="delete-button"
-                    onClick={() => handleDeleteOrder(order.id)}
-                    title="Eliminar Pedido"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
+                    <button
+                      className="ver-button"
+                      onClick={() => openModal(order)}
+                    >
+                      Ver Detalles
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeleteOrder(order.id)}
+                      title="Eliminar Pedido"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

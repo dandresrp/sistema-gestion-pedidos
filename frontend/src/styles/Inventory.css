@@ -222,7 +222,7 @@
 
 .modal input {
   all: unset;
-  width: 80%;
+  width: 100%;
   margin-top: 0.25rem;
   margin-bottom: 1rem;
   padding: 5px 8px;
