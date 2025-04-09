@@ -1,28 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/UserClientModals.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import { userController } from "../controllers/userController";
+import { clientController } from "../controllers/clientController";
+import { authController } from "../controllers/authController";
 
 export function ManageUsersModal({ onClose }) {
   const [activeTab, setActiveTab] = useState("ver");
-  const [users, setUsers] = useState([
-    {
-      id_usuario: 1,
-      nombre: "Lucía Gómez",
-      correo: "lucia@example.com",
-      contrasena: "",
-      rol: "Administrador",
-      nombre_usuario: "lgomez",
-    },
-    {
-      id_usuario: 2,
-      nombre: "Carlos Ramírez",
-      correo: "carlos@example.com",
-      contrasena: "",
-      rol: "Vendedor",
-      nombre_usuario: "cramirez",
-    },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [newUser, setNewUser] = useState({
     nombre: "",
@@ -38,6 +25,28 @@ export function ManageUsersModal({ onClose }) {
   const [userToDelete, setUserToDelete] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Cargar usuarios al montar el componente
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await userController.getAllUsers();
+      console.log(response);
+      if (response.success) {
+        setUsers(response.data);
+      } else {
+        showToast(response.message || "Error al cargar usuarios", "error");
+      }
+    } catch (error) {
+      showToast("Error al conectar con el servidor", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const showToast = (text, tipo = "exito") => {
     setToastMessage(text);
     setToastType(tipo);
@@ -48,7 +57,7 @@ export function ManageUsersModal({ onClose }) {
     }, 3000);
   };
 
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUser.correo);
     const contraseñaValida =
       /^(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|\\:;"'<>,.?/~`]).{8,}$/.test(
@@ -89,21 +98,48 @@ export function ManageUsersModal({ onClose }) {
       return;
     }
 
-    const updated = [...users, { ...newUser, id_usuario: Date.now() }];
-    setUsers(updated);
-    setNewUser({
-      nombre: "",
-      correo: "",
-      contrasena: "",
-      rol: "",
-      nombre_usuario: "",
-    });
-    showToast("Usuario agregado exitosamente");
+    try {
+      setLoading(true);
+      // Asumimos que existe un método para crear usuarios
+      const response = await authController.register(newUser);
+
+      if (response.success) {
+        setUsers([...users, response.data]);
+        setNewUser({
+          nombre: "",
+          correo: "",
+          contrasena: "",
+          rol: "",
+          nombre_usuario: "",
+        });
+        showToast("Usuario agregado exitosamente");
+      } else {
+        showToast(response.message || "Error al crear usuario", "error");
+      }
+    } catch (error) {
+      showToast("Error al conectar con el servidor", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const confirmDeleteUser = () => {
-    setUsers(users.filter((u) => u.id_usuario !== userToDelete.id_usuario));
-    setUserToDelete(null);
+  const confirmDeleteUser = async () => {
+    try {
+      setLoading(true);
+      const response = await userController.deleteUser(userToDelete.id_usuario);
+
+      if (response.success) {
+        setUsers(users.filter((u) => u.id_usuario !== userToDelete.id_usuario));
+        showToast("Usuario eliminado correctamente");
+      } else {
+        showToast(response.message || "Error al eliminar usuario", "error");
+      }
+    } catch (error) {
+      showToast("Error al conectar con el servidor", error);
+    } finally {
+      setLoading(false);
+      setUserToDelete(null);
+    }
   };
 
   const cancelDeleteUser = () => {
@@ -137,22 +173,29 @@ export function ManageUsersModal({ onClose }) {
 
           {activeTab === "ver" && (
             <div className="scrollable-list">
-              <ul className="item-list">
-                {users.map((user) => (
-                  <li key={user.id_usuario} className="list-item">
-                    <div>
-                      <strong>{user.nombre_usuario}</strong> ({user.rol}) -{" "}
-                      {user.correo}
-                    </div>
-                    <button
-                      onClick={() => handleDeleteUser(user)}
-                      className="delete-button"
-                    >
-                      Eliminar
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              {loading ? (
+                <p className="loading-text">Cargando usuarios...</p>
+              ) : users.length === 0 ? (
+                <p className="empty-message">No hay usuarios registrados</p>
+              ) : (
+                <ul className="item-list">
+                  {users.map((user) => (
+                    <li key={user.id_usuario} className="list-item">
+                      <div>
+                        <strong>{user.nombre_usuario}</strong> ({user.rol}) -{" "}
+                        {user.correo}
+                      </div>
+                      <button
+                        onClick={() => handleDeleteUser(user)}
+                        className="delete-button"
+                        disabled={loading}
+                      >
+                        Eliminar
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
 
@@ -166,6 +209,7 @@ export function ManageUsersModal({ onClose }) {
                   onChange={(e) =>
                     setNewUser({ ...newUser, nombre: e.target.value })
                   }
+                  disabled={loading}
                   required
                 />
                 <input
@@ -175,6 +219,7 @@ export function ManageUsersModal({ onClose }) {
                   onChange={(e) =>
                     setNewUser({ ...newUser, correo: e.target.value })
                   }
+                  disabled={loading}
                   required
                 />
                 <div className="password-container">
@@ -201,6 +246,7 @@ export function ManageUsersModal({ onClose }) {
                   onChange={(e) =>
                     setNewUser({ ...newUser, rol: e.target.value })
                   }
+                  disabled={loading}
                   required
                 />
                 <input
@@ -213,19 +259,28 @@ export function ManageUsersModal({ onClose }) {
                       nombre_usuario: e.target.value,
                     })
                   }
+                  disabled={loading}
                   required
                 />
               </div>
               <div className="form-actions">
-                <button onClick={handleAddUser} className="save-button">
-                  Agregar Usuario
+                <button
+                  onClick={handleAddUser}
+                  className="save-button"
+                  disabled={loading}
+                >
+                  {loading ? "Agregando..." : "Agregar Usuario"}
                 </button>
               </div>
             </>
           )}
 
           <div className="modal-buttons">
-            <button onClick={onClose} className="cancel-button">
+            <button
+              onClick={onClose}
+              className="cancel-button"
+              disabled={loading}
+            >
               Cerrar
             </button>
           </div>
@@ -240,10 +295,18 @@ export function ManageUsersModal({ onClose }) {
               <strong>{userToDelete.nombre_usuario}</strong>?
             </p>
             <div className="modal-actions">
-              <button className="guardar-button" onClick={confirmDeleteUser}>
-                Sí, eliminar
+              <button
+                className="guardar-button"
+                onClick={confirmDeleteUser}
+                disabled={loading}
+              >
+                {loading ? "Eliminando..." : "Sí, eliminar"}
               </button>
-              <button className="cancelar-button" onClick={cancelDeleteUser}>
+              <button
+                className="cancelar-button"
+                onClick={cancelDeleteUser}
+                disabled={loading}
+              >
                 Cancelar
               </button>
             </div>
@@ -260,22 +323,8 @@ export function ManageUsersModal({ onClose }) {
 
 export function ManageClientsModal({ onClose }) {
   const [activeTab, setActiveTab] = useState("ver");
-  const [clients, setClients] = useState([
-    {
-      id_cliente: 1,
-      nombre: "Pedro López",
-      telefono: "98765432",
-      correo: "pedro@example.com",
-      direccion: "Barrio Centro, Tegucigalpa",
-    },
-    {
-      id_cliente: 2,
-      nombre: "Ana Torres",
-      telefono: "99887766",
-      correo: "ana@example.com",
-      direccion: "Colonia Kennedy, Tegucigalpa",
-    },
-  ]);
+  const [clients, setClients] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [newClient, setNewClient] = useState({
     nombre: "",
@@ -289,7 +338,28 @@ export function ManageClientsModal({ onClose }) {
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [clientToDelete, setClientToDelete] = useState(null);
 
-  const handleAddClient = () => {
+  // Cargar clientes al montar el componente
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  const fetchClients = async () => {
+    try {
+      setLoading(true);
+      const response = await clientController.getAllClients();
+      if (response.success) {
+        setClients(response.data);
+      } else {
+        showToast(response.message || "Error al cargar clientes", "error");
+      }
+    } catch (error) {
+      showToast("Error al conectar con el servidor", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddClient = async () => {
     const telefonoValido = /^[983]\d{7}$/.test(newClient.telefono);
     const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newClient.correo);
 
@@ -316,21 +386,49 @@ export function ManageClientsModal({ onClose }) {
       return;
     }
 
-    const updated = [...clients, { ...newClient, id_cliente: Date.now() }];
-    setClients(updated);
-    setNewClient({ nombre: "", telefono: "", correo: "", direccion: "" });
+    try {
+      setLoading(true);
+      const response = await clientController.createClient(newClient);
+
+      if (response.success) {
+        setClients([...clients, response.data]);
+        setNewClient({ nombre: "", telefono: "", correo: "", direccion: "" });
+        showToast("Cliente agregado correctamente");
+      } else {
+        showToast(response.message || "Error al crear cliente", "error");
+      }
+    } catch (error) {
+      showToast("Error al conectar con el servidor", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteClient = (client) => {
     setClientToDelete(client);
   };
 
-  const confirmDeleteClient = () => {
-    setClients(
-      clients.filter((c) => c.id_cliente !== clientToDelete.id_cliente)
-    );
-    setClientToDelete(null);
-    showToast("Cliente eliminado correctamente");
+  const confirmDeleteClient = async () => {
+    try {
+      setLoading(true);
+      const response = await clientController.deleteClient(
+        clientToDelete.cliente_id
+      );
+
+      if (response.success) {
+        setClients(
+          clients.filter((c) => c.cliente_id !== clientToDelete.cliente_id)
+        );
+        showToast("Cliente eliminado correctamente");
+      } else {
+        showToast(response.message || "Error al eliminar cliente", "error");
+      }
+    } catch (error) {
+      showToast("Error al conectar con el servidor", error);
+    } finally {
+      setLoading(false);
+      setClientToDelete(null);
+    }
   };
 
   const cancelDeleteClient = () => {
@@ -370,24 +468,31 @@ export function ManageClientsModal({ onClose }) {
 
           {activeTab === "ver" && (
             <div className="scrollable-list">
-              <ul className="item-list">
-                {clients.map((client) => (
-                  <li key={client.id_cliente} className="list-item">
-                    <div>
-                      <strong>{client.nombre}</strong> - {client.telefono} -{" "}
-                      {client.correo}
-                      <br />
-                      <small>{client.direccion}</small>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteClient(client)}
-                      className="delete-button"
-                    >
-                      Eliminar
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              {loading ? (
+                <p className="loading-text">Cargando clientes...</p>
+              ) : clients.length === 0 ? (
+                <p className="empty-message">No hay clientes registrados</p>
+              ) : (
+                <ul className="item-list">
+                  {clients.map((client) => (
+                    <li key={client.cliente_id} className="list-item">
+                      <div>
+                        <strong>{client.nombre}</strong> - {client.telefono} -{" "}
+                        {client.correo}
+                        <br />
+                        <small>{client.direccion}</small>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteClient(client)}
+                        className="delete-button"
+                        disabled={loading}
+                      >
+                        Eliminar
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
 
@@ -401,6 +506,7 @@ export function ManageClientsModal({ onClose }) {
                   onChange={(e) =>
                     setNewClient({ ...newClient, nombre: e.target.value })
                   }
+                  disabled={loading}
                   required
                 />
                 <input
@@ -410,6 +516,7 @@ export function ManageClientsModal({ onClose }) {
                   onChange={(e) =>
                     setNewClient({ ...newClient, telefono: e.target.value })
                   }
+                  disabled={loading}
                   required
                 />
                 <input
@@ -419,6 +526,7 @@ export function ManageClientsModal({ onClose }) {
                   onChange={(e) =>
                     setNewClient({ ...newClient, correo: e.target.value })
                   }
+                  disabled={loading}
                   required
                 />
                 <textarea
@@ -428,6 +536,7 @@ export function ManageClientsModal({ onClose }) {
                   onChange={(e) =>
                     setNewClient({ ...newClient, direccion: e.target.value })
                   }
+                  disabled={loading}
                   required
                 />
                 <div className="char-counter">
@@ -435,15 +544,23 @@ export function ManageClientsModal({ onClose }) {
                 </div>
               </div>
               <div className="form-actions">
-                <button onClick={handleAddClient} className="save-button">
-                  Agregar Cliente
+                <button
+                  onClick={handleAddClient}
+                  className="save-button"
+                  disabled={loading}
+                >
+                  {loading ? "Agregando..." : "Agregar Cliente"}
                 </button>
               </div>
             </>
           )}
 
           <div className="modal-buttons">
-            <button onClick={onClose} className="cancel-button">
+            <button
+              onClick={onClose}
+              className="cancel-button"
+              disabled={loading}
+            >
               Cerrar
             </button>
           </div>
@@ -458,10 +575,18 @@ export function ManageClientsModal({ onClose }) {
               <strong>{clientToDelete.nombre}</strong>?
             </p>
             <div className="modal-actions">
-              <button className="guardar-button" onClick={confirmDeleteClient}>
-                Sí, eliminar
+              <button
+                className="guardar-button"
+                onClick={confirmDeleteClient}
+                disabled={loading}
+              >
+                {loading ? "Eliminando..." : "Sí, eliminar"}
               </button>
-              <button className="cancelar-button" onClick={cancelDeleteClient}>
+              <button
+                className="cancelar-button"
+                onClick={cancelDeleteClient}
+                disabled={loading}
+              >
                 Cancelar
               </button>
             </div>

@@ -67,6 +67,7 @@ export const SQL_GET_INCOME_BY_MONTH = `
 
 export const SQL_GET_PENDING_ORDERS = `
   SELECT p.fecha_estimada_entrega,
+        p.hora_estimada_entrega,
         c.nombre         AS nombre_cliente,
         e.nombre         AS estado,
         STRING_AGG(
@@ -83,7 +84,7 @@ export const SQL_GET_PENDING_ORDERS = `
           JOIN public.estados e ON p.estado_id = e.estado_id
   WHERE ($1::DATE IS NULL OR p.fecha_finalizacion >= $1::DATE)
     AND ($2::DATE IS NULL OR p.fecha_finalizacion <= $2::DATE)
-    AND e.estado_id IN (1, 2, 3)
+    AND e.nombre IN ('Creado', 'En Produccion', 'En Espera')
   GROUP BY p.pedido_id, p.fecha_estimada_entrega, c.nombre, e.nombre
   ORDER BY p.fecha_estimada_entrega
   OFFSET COALESCE($3, 0) LIMIT $4;
@@ -193,6 +194,7 @@ export const SQL_GET_BEST_SELLING_PRODUCTS_HISTORY = `
 
 export const SQL_GET_INVENTORY = `
   SELECT
+
       p.nombre AS nombre_producto,
       v.sku,
       v.stock,
