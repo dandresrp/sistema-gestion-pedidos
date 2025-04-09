@@ -127,7 +127,34 @@ export const getProductionCapacity = async (req, res) => {
       startDate || null,
       endDate || null,
     ]);
-    res.success(result.rows);
+
+    const formattedResult = result.rows.map(row => {
+      const date = new Date(row.mes);
+
+      const monthNames = [
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre',
+      ];
+
+      const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+      return {
+        ...row,
+        mes: formattedDate,
+      };
+    });
+
+    res.success(formattedResult);
   } catch (error) {
     console.error('Error fetching production capacity:', error);
     res.error('Error al obtener la capacidad de producción');

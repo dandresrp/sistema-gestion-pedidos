@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import { reportController } from "../../controllers/reportController";
-import "../../styles/inventory.css";
+import "../../styles/Inventory.css";
 import ProductCard from "../../components/ProductCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../styles/orders.css";
+import "../../styles/Orders.css";
 import CreateOrder from "../../components/CreateOrder";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faTrash } from "@fortawesome/free-solid-svg-icons";
