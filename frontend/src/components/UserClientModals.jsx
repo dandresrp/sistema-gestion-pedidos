@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/UserClientModals.css";
 import { userController } from "../controllers/userController";
 import { clientController } from "../controllers/clientController";
+import { authController } from "../controllers/authController";
 
 export function ManageUsersModal({ onClose }) {
   const [activeTab, setActiveTab] = useState("ver");
@@ -86,7 +87,7 @@ export function ManageUsersModal({ onClose }) {
     try {
       setLoading(true);
       // Asumimos que existe un método para crear usuarios
-      const response = await userController.createUser(newUser);
+      const response = await authController.register(newUser);
 
       if (response.success) {
         setUsers([...users, response.data]);
