@@ -1,0 +1,30 @@
+.product-card {
+  color: white;
+  background: linear-gradient(
+    to left,
+    rgba(105, 146, 199, 0.8),
+    rgba(163, 189, 237, 0.6)
+  );
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); */
+  transition: border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  border-color: #368dd9;
+}
+
+.product-card h3 {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.product-card p {
+  margin: 0.25rem 0 0.5rem;
+}

@@ -1,0 +1,53 @@
+.dashboard {
+  padding: 2rem;
+  font-family: sans-serif;
+  background-color: #f0f4ff;
+  height: 100vh;
+}
+
+h1 {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: #5e90d2;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.gestion-section {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.gestion-card {
+  flex: 1 1 300px;
+  background-color: #e8f0fe;
+  padding: 2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.gestion-card:hover {
+  background-color: #d2e3fc;
+}

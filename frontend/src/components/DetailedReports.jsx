@@ -89,13 +89,20 @@ const DetailedReports = ({
             <h2>{title}</h2>
           </div>
           <div className="report-period">
-            <span>
-              Desde: <strong>{date1}</strong>
-            </span>
-            <br />
-            <span>
-              Hasta: <strong>{date2}</strong>
-            </span>
+            {date1 && (
+              <span>
+                Desde: <strong>{date1}</strong>
+              </span>
+            )}
+
+            {date2 && (
+              <>
+                <br />
+                <span>
+                  Hasta: <strong>{date2}</strong>
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -114,13 +121,20 @@ const DetailedReports = ({
               paginatedData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {tableColumns.map((column) => (
-                    <td key={`${rowIndex}-${column.id}`}>
+                    <td
+                      key={`${rowIndex}-${column.id}`}
+                      style={{
+                        textAlign: "center", // mantenemos todo centrado a nivel celda
+                        padding: "0.5rem",
+                      }}
+                    >
                       {column.isCurrency ? (
                         <div
                           style={{
                             display: "flex",
                             justifyContent: "space-between",
-                            width: "100%",
+                            maxWidth: "100%",
+                            margin: "0 auto",
                           }}
                         >
                           <span>Lps.</span>
@@ -133,6 +147,28 @@ const DetailedReports = ({
                               }
                             )}
                           </span>
+                        </div>
+                      ) : column.alignRight ? (
+                        <div
+                          style={{
+                            textAlign: "right",
+                            paddingRight: "20px",
+                            display: "inline-block",
+                            width: "60%",
+                          }}
+                        >
+                          {row[column.id]}
+                        </div>
+                      ) : column.alignLeft ? (
+                        <div
+                          style={{
+                            textAlign: "left",
+                            paddingLeft: "20px",
+                            display: "inline-block",
+                            width: "80%",
+                          }}
+                        >
+                          {row[column.id]}
                         </div>
                       ) : (
                         row[column.id]

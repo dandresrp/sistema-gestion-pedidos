@@ -15,7 +15,13 @@
   overflow: hidden;
 }
 
-.report-table th,
+.report-table th {
+  font-size: 17px;
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
 .report-table td {
   padding: 10px;
   text-align: center;
