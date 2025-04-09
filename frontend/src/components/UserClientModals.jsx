@@ -1,0 +1,319 @@
+import React, { useState } from "react";
+
+export function ManageUsersModal({ onClose }) {
+  const [activeTab, setActiveTab] = useState("ver");
+  const [users, setUsers] = useState([
+    {
+      id_usuario: 1,
+      nombre: "Lucía Gómez",
+      correo: "lucia@example.com",
+      contrasena: "",
+      rol: "Administrador",
+      nombre_usuario: "lgomez",
+    },
+    {
+      id_usuario: 2,
+      nombre: "Carlos Ramírez",
+      correo: "carlos@example.com",
+      contrasena: "",
+      rol: "Vendedor",
+      nombre_usuario: "cramirez",
+    },
+  ]);
+  const [newUser, setNewUser] = useState({
+    nombre: "",
+    correo: "",
+    contrasena: "",
+    rol: "",
+    nombre_usuario: "",
+  });
+
+  const handleAddUser = () => {
+    if (
+      !newUser.nombre ||
+      !newUser.correo ||
+      !newUser.rol ||
+      !newUser.nombre_usuario
+    )
+      return;
+    const updated = [...users, { ...newUser, id_usuario: Date.now() }];
+    setUsers(updated);
+    setNewUser({
+      nombre: "",
+      correo: "",
+      contrasena: "",
+      rol: "",
+      nombre_usuario: "",
+    });
+  };
+
+  const handleDeleteUser = (id) => {
+    const confirmar = window.confirm("¿Eliminar este usuario?");
+    if (!confirmar) return;
+    setUsers(users.filter((u) => u.id_usuario !== id));
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal">
+        <div className="modal-description">
+          <h2>Gestionar Usuarios</h2>
+
+          <div className="tabs">
+            <button
+              className={activeTab === "ver" ? "active" : ""}
+              onClick={() => setActiveTab("ver")}
+            >
+              Ver / Eliminar
+            </button>
+            <button
+              className={activeTab === "agregar" ? "active" : ""}
+              onClick={() => setActiveTab("agregar")}
+            >
+              Agregar
+            </button>
+          </div>
+
+          {activeTab === "ver" && (
+            <div className="scrollable-list">
+              <ul className="item-list">
+                {users.map((user) => (
+                  <li key={user.id_usuario} className="list-item">
+                    <div>
+                      <strong>{user.nombre_usuario}</strong> ({user.rol}) -{" "}
+                      {user.correo}
+                    </div>
+                    <button
+                      onClick={() => handleDeleteUser(user.id_usuario)}
+                      className="delete-button"
+                    >
+                      Eliminar
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {activeTab === "agregar" && (
+            <>
+              <div className="form-grid">
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  value={newUser.nombre}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, nombre: e.target.value })
+                  }
+                />
+                <input
+                  type="email"
+                  placeholder="Correo"
+                  value={newUser.correo}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, correo: e.target.value })
+                  }
+                />
+                <input
+                  type="password"
+                  placeholder="Contraseña"
+                  value={newUser.contrasena}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, contrasena: e.target.value })
+                  }
+                />
+                <input
+                  type="text"
+                  placeholder="Rol"
+                  value={newUser.rol}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, rol: e.target.value })
+                  }
+                />
+                <input
+                  type="text"
+                  placeholder="Nombre de usuario"
+                  value={newUser.nombre_usuario}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, nombre_usuario: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-actions">
+                <button onClick={handleAddUser} className="save-button">
+                  Agregar Usuario
+                </button>
+              </div>
+            </>
+          )}
+
+          <div className="modal-buttons">
+            <button onClick={onClose} className="cancel-button">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ManageClientsModal({ onClose }) {
+  const [activeTab, setActiveTab] = useState("ver");
+  const [clients, setClients] = useState([
+    {
+      id_cliente: 1,
+      nombre: "Pedro López",
+      telefono: "98765432",
+      correo: "pedro@example.com",
+      direccion: "Barrio Centro, Tegucigalpa",
+    },
+    {
+      id_cliente: 2,
+      nombre: "Ana Torres",
+      telefono: "99887766",
+      correo: "ana@example.com",
+      direccion: "Colonia Kennedy, Tegucigalpa",
+    },
+  ]);
+
+  const [newClient, setNewClient] = useState({
+    nombre: "",
+    telefono: "",
+    correo: "",
+    direccion: "",
+  });
+
+  const handleAddClient = () => {
+    const telefonoValido = /^[983]\d{7}$/.test(newClient.telefono);
+    const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newClient.correo);
+
+    if (!newClient.nombre || !newClient.telefono || !newClient.correo) {
+      showToast(
+        "Todos los campos obligatorios deben estar completos.",
+        "error"
+      );
+      return;
+    }
+
+    if (!telefonoValido) {
+      showToast(
+        "El número debe tener 8 dígitos y comenzar con 9, 8 o 3.",
+        "error"
+      );
+      return;
+    }
+
+    if (!correoValido) {
+      showToast("El correo electrónico no es válido.", "error");
+      return;
+    }
+
+    const updated = [...clients, { ...newClient, id_cliente: Date.now() }];
+    setClients(updated);
+    setNewClient({ nombre: "", telefono: "", correo: "", direccion: "" });
+  };
+
+  const handleDeleteClient = (id) => {
+    const confirmar = window.confirm("¿Eliminar este cliente?");
+    if (!confirmar) return;
+    setClients(clients.filter((c) => c.id_cliente !== id));
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal">
+        <div className="modal-description">
+          <h2>Gestionar Clientes</h2>
+
+          <div className="tabs">
+            <button
+              className={activeTab === "ver" ? "active" : ""}
+              onClick={() => setActiveTab("ver")}
+            >
+              Ver / Eliminar
+            </button>
+            <button
+              className={activeTab === "agregar" ? "active" : ""}
+              onClick={() => setActiveTab("agregar")}
+            >
+              Agregar
+            </button>
+          </div>
+
+          {activeTab === "ver" && (
+            <div className="scrollable-list">
+              <ul className="item-list">
+                {clients.map((client) => (
+                  <li key={client.id_cliente} className="list-item">
+                    <div>
+                      <strong>{client.nombre}</strong> - {client.telefono} -{" "}
+                      {client.correo}
+                      <br />
+                      <small>{client.direccion}</small>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteClient(client.id_cliente)}
+                      className="delete-button"
+                    >
+                      Eliminar
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {activeTab === "agregar" && (
+            <>
+              <div className="form-grid">
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  value={newClient.nombre}
+                  onChange={(e) =>
+                    setNewClient({ ...newClient, nombre: e.target.value })
+                  }
+                />
+                <input
+                  type="text"
+                  placeholder="Teléfono"
+                  value={newClient.telefono}
+                  onChange={(e) =>
+                    setNewClient({ ...newClient, telefono: e.target.value })
+                  }
+                />
+                <input
+                  type="email"
+                  placeholder="Correo"
+                  value={newClient.correo}
+                  onChange={(e) =>
+                    setNewClient({ ...newClient, correo: e.target.value })
+                  }
+                />
+                <textarea
+                  placeholder="Dirección"
+                  value={newClient.direccion}
+                  onChange={(e) =>
+                    setNewClient({ ...newClient, direccion: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-actions">
+                <button onClick={handleAddClient} className="save-button">
+                  Agregar Cliente
+                </button>
+              </div>
+            </>
+          )}
+
+          <div className="modal-buttons">
+            <button onClick={onClose} className="cancel-button">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

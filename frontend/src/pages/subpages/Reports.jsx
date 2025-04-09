@@ -146,9 +146,12 @@ const Reports = () => {
               const res = await reportController.getInventory();
               if (!res.success) throw new Error(res.message);
 
+              const sorted = res.data.sort(
+                (a, b) => a.stock_disponible - b.stock_disponible
+              );
+
               data = {
-                data: res.data.map((item) => ({
-                  //id: item.id || "N/A",
+                data: sorted.map((item) => ({
                   producto: item.nombre_producto,
                   entradas: item.entradas,
                   salidas: item.salidas,
@@ -290,8 +293,6 @@ const Reports = () => {
             case "production-capacity": {
               type = "bar-line";
               const res = await reportController.getProductionCapacity();
-              adjustedStart.toISOString().split("T")[0];
-              adjustedEnd.toISOString().split("T")[0];
               if (!res.success) throw new Error(res.message);
 
               const capacityData = res.data.map((item) => ({
@@ -375,28 +376,32 @@ const Reports = () => {
             columns={ReportsColumns}
             title={ReportsTitles}
             date1={
-              <DatePicker
-                selected={startDate}
-                onChange={setStartDate}
-                dateFormat="dd 'de' MMMM 'de' yyyy"
-                locale="es"
-                onCalendarOpen={() => setIsStartOpen(true)}
-                onCalendarClose={() => setIsStartOpen(false)}
-                customInput={<CustomDateInput isOpen={isStartOpen} />}
-                popperPlacement="bottom-start"
-              />
+              reportName !== "inventory" && (
+                <DatePicker
+                  selected={startDate}
+                  onChange={setStartDate}
+                  dateFormat="dd 'de' MMMM 'de' yyyy"
+                  locale="es"
+                  onCalendarOpen={() => setIsStartOpen(true)}
+                  onCalendarClose={() => setIsStartOpen(false)}
+                  customInput={<CustomDateInput isOpen={isStartOpen} />}
+                  popperPlacement="bottom-start"
+                />
+              )
             }
             date2={
-              <DatePicker
-                selected={endDate}
-                onChange={setEndDate}
-                dateFormat="dd 'de' MMMM 'de' yyyy"
-                locale="es"
-                onCalendarOpen={() => setIsEndOpen(true)}
-                onCalendarClose={() => setIsEndOpen(false)}
-                customInput={<CustomDateInput isOpen={isEndOpen} />}
-                popperPlacement="bottom-start"
-              />
+              reportName !== "inventory" && (
+                <DatePicker
+                  selected={endDate}
+                  onChange={setEndDate}
+                  dateFormat="dd 'de' MMMM 'de' yyyy"
+                  locale="es"
+                  onCalendarOpen={() => setIsEndOpen(true)}
+                  onCalendarClose={() => setIsEndOpen(false)}
+                  customInput={<CustomDateInput isOpen={isEndOpen} />}
+                  popperPlacement="bottom-start"
+                />
+              )
             }
           />
         </>
@@ -430,7 +435,7 @@ const Reports = () => {
             />
           }
         >
-          {(type == "line" || type == "bar-line") && (
+          {["line", "bar-line", "pie"].includes(type) && (
             <TableComponent data={reportData} columns={ReportsColumns} />
           )}
           <ChartComponent

@@ -9,11 +9,13 @@ import {
   LiaSignOutAltSolid,
   LiaUserCircleSolid,
 } from "react-icons/lia";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
   const { logout } = useAuth();
   const [isReportesOpen, setIsReportesOpen] = useState(false);
+  const location = useLocation();
+  const isReportsSection = location.pathname.startsWith("/reports");
 
   const handleMouseEnter = () => {
     setSidebarExpanded(true);
@@ -52,8 +54,17 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
             {"Usuario"}
           </span>
         </Link>
-        <Link to={"/home"} className="menu-item">
-          <div className="menu-icon">
+        <Link
+          to="/home"
+          className={`menu-item ${
+            sidebarExpanded && location.pathname === "/home" ? "active" : ""
+          }`}
+        >
+          <div
+            className={`menu-icon ${
+              !sidebarExpanded && location.pathname === "/home" ? "active" : ""
+            }`}
+          >
             <LiaHomeSolid />
           </div>
           <span
@@ -62,8 +73,19 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
             {"Inicio"}
           </span>
         </Link>
-        <Link to={"/orders"} className="menu-item">
-          <div className="menu-icon">
+        <Link
+          to="/orders"
+          className={`menu-item ${
+            sidebarExpanded && location.pathname === "/orders" ? "active" : ""
+          }`}
+        >
+          <div
+            className={`menu-icon ${
+              !sidebarExpanded && location.pathname === "/orders"
+                ? "active"
+                : ""
+            }`}
+          >
             <LiaClipboardListSolid />
           </div>
           <span
@@ -72,8 +94,21 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
             {"Pedidos"}
           </span>
         </Link>
-        <Link to={"/inventory"} className="menu-item">
-          <div className="menu-icon">
+        <Link
+          to="/inventory"
+          className={`menu-item ${
+            sidebarExpanded && location.pathname === "/inventory"
+              ? "active"
+              : ""
+          }`}
+        >
+          <div
+            className={`menu-icon ${
+              !sidebarExpanded && location.pathname === "/inventory"
+                ? "active"
+                : ""
+            }`}
+          >
             <LiaBoxesSolid />
           </div>
           <span
@@ -83,7 +118,7 @@ const Sidebar = ({ sidebarExpanded, setSidebarExpanded }) => {
           </span>
         </Link>
         <Link
-          className="menu-item"
+          className={`menu-item ${isReportsSection ? "active" : ""}`}
           onClick={() => setIsReportesOpen(!isReportesOpen)}
         >
           <div className="menu-icon">

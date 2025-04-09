@@ -14,7 +14,6 @@
   width: 250px;
 }
 
-/* Contenedor de menú con scroll si es necesario */
 .menu-container {
   display: flex;
   flex-direction: column;
@@ -38,7 +37,7 @@
 }
 
 .menu-item:hover {
-  background-color: rgb(94 144 210 / 50%);
+  background-color: rgb(94 144 210 / 40%);
   border-radius: 9px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   color: #fff;
@@ -49,6 +48,14 @@
   width: 25px;
   height: 25px;
   line-height: 1;
+}
+
+.menu-icon.active {
+  background-color: rgb(94 144 210 / 50%);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 7px;
+  margin: -7px 0 -7px -7px;
 }
 
 .menu-text.expanded {
@@ -63,14 +70,13 @@
 }
 
 .submenu-container {
-  flex-grow: 1; /* Hace que este bloque use todo el espacio restante */
-  overflow: hidden; /* Evita que el contenido empuje el logout */
+  flex-grow: 1;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: 0.5s ease-in-out;
 }
 
-/* Submenú */
 .submenu {
   display: none;
   transition: max-height 0.5s ease-in-out;
@@ -79,8 +85,8 @@
 .submenu.open {
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Se expande hasta el espacio disponible */
-  overflow-y: auto; /* Permite scroll solo dentro del submenú */
+  flex-grow: 1;
+  overflow-y: auto;
   padding-left: 40px;
 }
 
@@ -99,7 +105,27 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Logout siempre abajo */
 .logout {
   padding: 10px 0;
+}
+
+.menu-item.active {
+  background-color: rgb(94 144 210 / 50%);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  color: white;
+}
+
+.sidebar:not(.expanded) .menu-item.active {
+  background-color: rgb(94 144 210 / 50%);
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.sidebar:not(.expanded) .menu-text {
+  display: none;
+}
+
+.menu-item + .menu-item {
+  margin-top: 0;
 }
