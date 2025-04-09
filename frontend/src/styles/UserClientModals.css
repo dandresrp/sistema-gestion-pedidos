@@ -87,7 +87,7 @@
 }
 
 .delete-button:hover {
-  background-color: #d32f2f;
+  background-color: #cc6060;
   color: white;
 }
 
@@ -132,6 +132,24 @@
 
 .char-counter.over-limit {
   color: red;
+}
+
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-container input {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.password-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #666;
 }
 
 .form-actions {

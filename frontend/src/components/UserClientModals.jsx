@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/UserClientModals.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { userController } from "../controllers/userController";
 import { clientController } from "../controllers/clientController";
 import { authController } from "../controllers/authController";
@@ -21,6 +23,7 @@ export function ManageUsersModal({ onClose }) {
   const [toastType, setToastType] = useState("exito");
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Cargar usuarios al montar el componente
   useEffect(() => {
@@ -56,6 +59,10 @@ export function ManageUsersModal({ onClose }) {
 
   const handleAddUser = async () => {
     const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUser.correo);
+    const contraseñaValida =
+      /^(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|\\:;"'<>,.?/~`]).{8,}$/.test(
+        newUser.contrasena
+      );
 
     if (
       !newUser.nombre ||
@@ -73,7 +80,14 @@ export function ManageUsersModal({ onClose }) {
       return;
     }
 
-    // Comprueba si el nombre de usuario ya existe
+    if (!contraseñaValida) {
+      showToast(
+        "La contraseña debe tener al menos 8 caracteres, incluir un número y un símbolo especial.",
+        "error"
+      );
+      return;
+    }
+
     const nombreUsuarioExiste = users.some(
       (u) =>
         u.nombre_usuario.toLowerCase() === newUser.nombre_usuario.toLowerCase()
@@ -208,16 +222,23 @@ export function ManageUsersModal({ onClose }) {
                   disabled={loading}
                   required
                 />
-                <input
-                  type="password"
-                  placeholder="Contraseña"
-                  value={newUser.contrasena}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, contrasena: e.target.value })
-                  }
-                  disabled={loading}
-                  required
-                />
+                <div className="password-container">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Contraseña"
+                    value={newUser.contrasena}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, contrasena: e.target.value })
+                    }
+                    required
+                  />
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    className="password-icon"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                </div>
+
                 <input
                   type="text"
                   placeholder="Rol"
@@ -354,7 +375,7 @@ export function ManageClientsModal({ onClose }) {
 
     if (!telefonoValido) {
       showToast(
-        "El número debe tener 8 dígitos y comenzar con 9, 8 o 3.",
+        "El número debe tener 8 dígitos y comenzar con 9, 8, 3 o 2.",
         "error"
       );
       return;

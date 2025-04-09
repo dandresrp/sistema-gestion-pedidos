@@ -15,10 +15,9 @@ class ReportColumns {
         },
       ],
       inventory: [
-        //{ id: "id", header: "ID" },
         { id: "producto", header: "Producto" },
-        { id: "entradas", header: "Entradas", alignRight: true },
-        { id: "salidas", header: "Salidas", alignRight: true },
+        // { id: "entradas", header: "Entradas", alignRight: true },
+        // { id: "salidas", header: "Salidas", alignRight: true },
         { id: "stockDisponible", header: "Stock Disponible", alignRight: true },
         { id: "precio", header: "Precio", isCurrency: true },
         { id: "total", header: "Total", isCurrency: true },
