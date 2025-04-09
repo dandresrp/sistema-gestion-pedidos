@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import clientRoutes from './routes/clientRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import roleRoutes from './routes/roleRoutes.js';
 import { responseHandler } from './middlewares/responseHandler.js';
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', userRoutes);
 app.use('/api/clientes', clientRoutes);
 app.use('/api/reportes', reportRoutes);
+app.use('/api/roles', roleRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor ejecutándose en: http://localhost:${port}`);
