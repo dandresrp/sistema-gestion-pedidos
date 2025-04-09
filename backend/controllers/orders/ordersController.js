@@ -9,9 +9,9 @@ export const getAllOrders = async (req, res) => {
       nombre_cliente,
       pedido_id,
     ]);
-    res.status(200).json(result.rows);
+    res.success(result.rows);
   } catch (error) {
     console.error('Error fetching orders:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.error('Internal server error', 500);
   }
 };
