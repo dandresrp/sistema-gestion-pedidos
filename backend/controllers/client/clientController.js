@@ -1,4 +1,4 @@
-import { query } from '../../config/database/db.js';
+import { query, pool } from '../../config/database/db.js';
 import {
   buildUpdateClientSQL,
   SQL_ADD_CLIENT,
@@ -19,9 +19,9 @@ export const getAllClients = async (req, res) => {
 };
 
 export const getClientById = async (req, res) => {
-  const { id_cliente } = req.params;
+  const { cliente_id } = req.params;
   try {
-    const result = await query(SQL_GET_CLIENT_BY_ID, [id_cliente]);
+    const result = await query(SQL_GET_CLIENT_BY_ID, [cliente_id]);
 
     if (result.rows.length === 0) {
       return res.error('Cliente no encontrado', 404);
@@ -36,30 +36,56 @@ export const getClientById = async (req, res) => {
 
 export const addClient = async (req, res) => {
   const { nombre, telefono, correo, direccion } = req.body;
+  const client = await pool.connect();
 
   try {
-    const existingClient = await query(SQL_GET_CLIENT_BY_PHONE, [telefono]);
+    await client.query('BEGIN');
+
+    const existingClient = await client.query(SQL_GET_CLIENT_BY_PHONE, [
+      telefono,
+    ]);
 
     if (existingClient.rows.length > 0) {
       return res.error('El cliente ya está registrado', 400);
     }
 
-    const result = await query(SQL_ADD_CLIENT, [
+    const lastIdResult = await client.query(
+      'SELECT cliente_id FROM clientes WHERE cliente_id LIKE $1 ORDER BY cliente_id DESC LIMIT 1',
+      ['CL%'],
+    );
+
+    let nextNum = 1;
+    if (lastIdResult.rows.length > 0) {
+      const lastId = lastIdResult.rows[0].cliente_id;
+      const lastNum = parseInt(lastId.substring(2), 10);
+      nextNum = lastNum + 1;
+    }
+
+    const clienteId = `CL${nextNum.toString().padStart(3, '0')}`;
+
+    const insertQuery =
+      'INSERT INTO clientes (cliente_id, nombre, telefono, correo, direccion) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+    const result = await client.query(insertQuery, [
+      clienteId,
       nombre,
       telefono,
       correo,
       direccion,
     ]);
 
+    await client.query('COMMIT');
     res.success(result.rows[0], 'Cliente agregado correctamente', 201);
   } catch (error) {
+    await client.query('ROLLBACK');
     console.log('Error al agregar cliente:', error);
     res.error('Error al agregar cliente');
+  } finally {
+    client.release();
   }
 };
 
 export const updateClient = async (req, res) => {
-  const { id_cliente } = req.params;
+  const { cliente_id } = req.params;
   const { nombre, telefono, correo, direccion } = req.body;
 
   try {
@@ -92,7 +118,7 @@ export const updateClient = async (req, res) => {
       return res.error('No se proporcionaron datos para actualizar', 400);
     }
 
-    values.push(id_cliente);
+    values.push(cliente_id);
 
     const SQL_UPDATE_CLIENT = buildUpdateClientSQL(updates, paramCounter);
     const result = await query(SQL_UPDATE_CLIENT, values);
@@ -109,10 +135,10 @@ export const updateClient = async (req, res) => {
 };
 
 export const deleteClient = async (req, res) => {
-  const { id_cliente } = req.params;
+  const { cliente_id } = req.params;
 
   try {
-    const result = await query(SQL_DELETE_CLIENT, [id_cliente]);
+    const result = await query(SQL_DELETE_CLIENT, [cliente_id]);
 
     if (result.rows.length === 0) {
       return res.error('Cliente no encontrado', 404);
