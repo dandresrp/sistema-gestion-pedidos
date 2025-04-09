@@ -19,16 +19,17 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
+ *               nombre:
+ *                 type: string
  *               nombre_usuario:
+ *                 type: string
+ *               rol:
+ *                 type: integer
+ *               correo:
  *                 type: string
  *               contrasena:
  *                 type: string
- *               nombre:
- *                 type: string
- *               correo:
- *                 type: string
- *               rol:
- *                 type: string
+
  *     responses:
  *       200:
  *         description: Usuario registrado exitosamente
