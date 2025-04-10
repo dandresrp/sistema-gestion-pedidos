@@ -45,7 +45,7 @@ const ReportChart = ({ type, data, dataKey, lines }) => {
                 />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip formatter={(value) => `${value}%`} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>
