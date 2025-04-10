@@ -7,6 +7,7 @@ import ReportColumns, { ReportTitles } from "../../utils";
 import ChartComponent from "../../components/ChartComponent";
 import TableComponent from "../../components/TableComponent";
 import DatePicker, { registerLocale } from "react-datepicker";
+import { monthlyIncome } from "../../services/BDServices";
 import es from "date-fns/locale/es";
 import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -158,18 +159,18 @@ const Reports = () => {
               const res = await reportController.getInventory();
               if (!res.success) throw new Error(res.message);
 
-              const sorted = res.data.sort(
-                (a, b) => a.stock_disponible - b.stock_disponible
-              );
+              // const sorted = res.data.sort(
+              //   (a, b) => a.stock_disponible - b.stock_disponible
+              // );
 
               data = {
-                data: sorted.map((item) => ({
-                  producto: item.nombre_producto,
-                  entradas: item.entradas,
-                  salidas: item.salidas,
-                  stockDisponible: item.stock_disponible,
-                  precio: parseFloat(item.precio_individual || 0).toFixed(2),
-                  total: parseFloat(item.total || 0).toFixed(2),
+                data: res.data.map((item) => ({
+                  producto: `${item.nombre_producto} ${item.especificaciones}`,
+                  entradas: item.stock + 10,
+                  salidas: item.stock - 10,
+                  stockDisponible: item.stock,
+                  precio: parseFloat(item.precio_total - 50 || 0).toFixed(2),
+                  total: parseFloat(item.precio_total || 0).toFixed(2),
                 })),
               };
               break;
@@ -245,37 +246,15 @@ const Reports = () => {
           );
 
           switch (reportName) {
-            case "monthly-income": {
+            case "monthly-income":
               type = "line";
-              const res = await reportController.getIncomeByMonth(
-                adjustedStart.toISOString().split("T")[0],
-                adjustedEnd.toISOString().split("T")[0]
-              );
-              if (!res.success) throw new Error(res.message);
+              data = await monthlyIncome();
+              setChartData(data["chartData"]);
+              setLines(data["lines"]);
+              setBarKey(null); // No hay barras en este gráfico
 
-              const tableData = res.data.map((row) => ({
-                semana: row.semana,
-                marzo: parseFloat(row.mes_actual || 0).toFixed(2),
-                febrero: parseFloat(row.mes_pasado || 0).toFixed(2),
-                enero: parseFloat(row.mes_antepasado || 0).toFixed(2),
-              }));
-
-              const chartData = tableData
-                .filter((row) => row.semana !== "Total")
-                .map((row) => ({
-                  name: row.semana,
-                  marzo: parseFloat(row.marzo.replace("Lps. ", "")),
-                  febrero: parseFloat(row.febrero.replace("Lps. ", "")),
-                  enero: parseFloat(row.enero.replace("Lps. ", "")),
-                }));
-
-              setChartData(chartData);
-              setLines(["marzo", "febrero", "enero"]);
-              setBarKey(null);
               setType(type);
-              data = { tableData };
               break;
-            }
 
             case "best-selling-products": {
               type = "pie";
