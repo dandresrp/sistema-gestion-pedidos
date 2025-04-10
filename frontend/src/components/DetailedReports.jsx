@@ -53,15 +53,13 @@ const DetailedReports = ({
     setPaginatedData(data.slice(startIndex, endIndex));
   }, [data, currentPage, recordsPerPage]);
 
-  // Manejar el cambio de página
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  // Generar números de página
   const getPageNumbers = () => {
     const pageNumbers = [];
-    const maxPageButtons = 5; // Mostrar como maximo 5 botones
+    const maxPageButtons = 5;
 
     let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
     let endPage = startPage + maxPageButtons - 1;
@@ -133,7 +131,7 @@ const DetailedReports = ({
                           style={{
                             display: "flex",
                             justifyContent: "space-between",
-                            maxWidth: "100%",
+                            maxWidth: "80%",
                             margin: "0 auto",
                           }}
                         >

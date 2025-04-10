@@ -116,84 +116,112 @@ export default function Inventory() {
         nombre: "Camisa XL",
         stock: 10,
         imagen: prodImg,
+        precio: "Lps 200.00",
+        descripcion: "Camisa sublimable",
       },
       {
         id: 1,
         nombre: "Camisa L",
         stock: 15,
         imagen: prodImg,
+        precio: "Lps 200.00",
+        descripcion: "Camisa sublimable",
       },
       {
         id: 1,
         nombre: "Camisa S",
         stock: 12,
         imagen: prodImg,
+        precio: "Lps 200.00",
+        descripcion: "Camisa sublimable",
       },
       {
         id: 1,
         nombre: "Camisa M",
         stock: 8,
         imagen: prodImg,
+        precio: "Lps 200.00",
+        descripcion: "Camisa sublimable",
       },
       {
         id: 2,
         nombre: "Gorra S Negra",
         stock: 4,
         imagen: Gorra,
+        precio: "Lps 200.00",
+        descripcion: "Gorra sublimable",
       },
       {
         id: 2,
         nombre: "Gorra M Blanca",
         stock: 9,
         imagen: Gorra,
+        precio: "Lps 200.00",
+        descripcion: "Gorra sublimable",
       },
       {
         id: 2,
         nombre: "Gorra L Verde",
         stock: 7,
         imagen: Gorra,
+        precio: "Lps 200.00",
+        descripcion: "Gorra sublimable",
       },
       {
         id: 2,
         nombre: "Gorra XL Azul",
         stock: 3,
         imagen: Gorra,
+        precio: "Lps 200.00",
+        descripcion: "Gorra sublimable",
       },
       {
         id: 3,
         nombre: "Llavero Rectangular",
         stock: 11,
         imagen: Llavero,
+        precio: "Lps 100.00",
+        descripcion: "Llavero sublimable",
       },
       {
         id: 3,
         nombre: "Llavero Circular",
         stock: 5,
         imagen: Llavero,
+        precio: "Lps 120.00",
+        descripcion: "Llavero sublimable",
       },
       {
         id: 3,
         nombre: "Termo Plástico",
         stock: 10,
         imagen: Termo,
+        precio: "Lps 170.00",
+        descripcion: "Termo sublimable",
       },
       {
         id: 3,
         nombre: "Termo Aluminio",
         stock: 7,
         imagen: Termo,
+        precio: "Lps 290.00",
+        descripcion: "Termo sublimable",
       },
       {
         id: 3,
         nombre: "Taza Mágica",
         stock: 12,
         imagen: Taza,
+        precio: "Lps 200.00",
+        descripcion: "Taza sublimable",
       },
       {
         id: 3,
         nombre: "Taza",
         stock: 9,
         imagen: Taza,
+        precio: "Lps 150.00",
+        descripcion: "Taza sublimable",
       },
     ];
 
@@ -387,7 +415,7 @@ export default function Inventory() {
                 Descripción:
                 <input
                   type="text"
-                  value={newProduct.descripcion}
+                  value={editProduct.descripcion}
                   onChange={(e) =>
                     setNewProduct({
                       ...newProduct,
