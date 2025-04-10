@@ -16,27 +16,7 @@ const TableComponent = ({ data, columns }) => {
           {data.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map((col) => (
-                <td key={col.id}>
-                  {col.isCurrency ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
-                      }}
-                    >
-                      <span>Lps.</span>
-                      <span>
-                        {parseFloat(row[col.id]).toLocaleString("es-HN", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </span>
-                    </div>
-                  ) : (
-                    row[col.id]
-                  )}
-                </td>
+                <td key={col.id}>{row[col.id]}</td>
               ))}
             </tr>
           ))}
