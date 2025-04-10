@@ -117,6 +117,7 @@ export default function Inventory() {
         stock: 10,
         imagen: prodImg,
         precio: "Lps 200.00",
+        descripcion: "Camisa sublimable",
       },
       {
         id: 1,
@@ -124,6 +125,7 @@ export default function Inventory() {
         stock: 15,
         imagen: prodImg,
         precio: "Lps 200.00",
+        descripcion: "Camisa sublimable",
       },
       {
         id: 1,
@@ -131,6 +133,7 @@ export default function Inventory() {
         stock: 12,
         imagen: prodImg,
         precio: "Lps 200.00",
+        descripcion: "Camisa sublimable",
       },
       {
         id: 1,
@@ -138,6 +141,7 @@ export default function Inventory() {
         stock: 8,
         imagen: prodImg,
         precio: "Lps 200.00",
+        descripcion: "Camisa sublimable",
       },
       {
         id: 2,
@@ -145,6 +149,7 @@ export default function Inventory() {
         stock: 4,
         imagen: Gorra,
         precio: "Lps 200.00",
+        descripcion: "Gorra sublimable",
       },
       {
         id: 2,
@@ -152,6 +157,7 @@ export default function Inventory() {
         stock: 9,
         imagen: Gorra,
         precio: "Lps 200.00",
+        descripcion: "Gorra sublimable",
       },
       {
         id: 2,
@@ -159,6 +165,7 @@ export default function Inventory() {
         stock: 7,
         imagen: Gorra,
         precio: "Lps 200.00",
+        descripcion: "Gorra sublimable",
       },
       {
         id: 2,
@@ -166,6 +173,7 @@ export default function Inventory() {
         stock: 3,
         imagen: Gorra,
         precio: "Lps 200.00",
+        descripcion: "Gorra sublimable",
       },
       {
         id: 3,
@@ -173,6 +181,7 @@ export default function Inventory() {
         stock: 11,
         imagen: Llavero,
         precio: "Lps 100.00",
+        descripcion: "Llavero sublimable",
       },
       {
         id: 3,
@@ -180,6 +189,7 @@ export default function Inventory() {
         stock: 5,
         imagen: Llavero,
         precio: "Lps 120.00",
+        descripcion: "Llavero sublimable",
       },
       {
         id: 3,
@@ -187,6 +197,7 @@ export default function Inventory() {
         stock: 10,
         imagen: Termo,
         precio: "Lps 170.00",
+        descripcion: "Termo sublimable",
       },
       {
         id: 3,
@@ -194,6 +205,7 @@ export default function Inventory() {
         stock: 7,
         imagen: Termo,
         precio: "Lps 290.00",
+        descripcion: "Termo sublimable",
       },
       {
         id: 3,
@@ -201,6 +213,7 @@ export default function Inventory() {
         stock: 12,
         imagen: Taza,
         precio: "Lps 200.00",
+        descripcion: "Taza sublimable",
       },
       {
         id: 3,
@@ -208,6 +221,7 @@ export default function Inventory() {
         stock: 9,
         imagen: Taza,
         precio: "Lps 150.00",
+        descripcion: "Taza sublimable",
       },
     ];
 
@@ -401,7 +415,7 @@ export default function Inventory() {
                 Descripción:
                 <input
                   type="text"
-                  value={newProduct.descripcion}
+                  value={editProduct.descripcion}
                   onChange={(e) =>
                     setNewProduct({
                       ...newProduct,
