@@ -101,6 +101,7 @@ export const SQL_GET_REJECTED_ORDERS = `
 
 export const SQL_GET_ORDERS_OUT_OF_TIME = `
   SELECT p.fecha_estimada_entrega,
+        p.hora_estimada_entrega,
         c.nombre                                                                               AS cliente,
         STRING_AGG(CONCAT(pr.nombre, ' (', dp.cantidad, ')'), ', ')                            AS productos,
         SUM(dp.cantidad)                                                                       AS cantidad,
