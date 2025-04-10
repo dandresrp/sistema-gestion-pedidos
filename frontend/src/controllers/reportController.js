@@ -22,14 +22,9 @@ export const reportController = {
     }
   },
 
-  getIncomeByMonth: async (startDate, endDate, offset, limit) => {
+  getIncomeByMonth: async (startDate, endDate) => {
     try {
-      const response = await reportService.getIncomeByMonth(
-        startDate,
-        endDate,
-        offset,
-        limit
-      );
+      const response = await reportService.getIncomeByMonth(startDate, endDate);
       return {
         success: true,
         data: response.data,

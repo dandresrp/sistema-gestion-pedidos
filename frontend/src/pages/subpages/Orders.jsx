@@ -3,15 +3,20 @@ import "../../styles/Orders.css";
 import CreateOrder from "../../components/CreateOrder";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { stagesController } from "../../controllers/stagesController.js";
+import { orderController } from "../../controllers/orderController.js";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
+  const [statuses, setStatuses] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editedStatus, setEditedStatus] = useState("");
   const [editedProducts, setEditedProducts] = useState([]);
   const [editedMetodoEnvio, setEditedMetodoEnvio] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastTipo, setToastTipo] = useState("exito");
@@ -23,57 +28,57 @@ export default function Orders() {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
 
-  const statuses = [
-    "Creado",
-    "En Espera",
-    "En Producción",
-    "Entregado",
-    "Listo",
-    "Rechazado",
-  ];
   const metodoEnvioOptions = ["Cargo Express", "N/A"];
 
   useEffect(() => {
-    const baseOrders = [
-      {
-        client: "Juan Pérez",
-        total: 100.0,
-        status: "En Espera",
-        date: "2025-04-01T10:00:00Z",
-        entrega: "2025-04-08",
-        usuario: "Lucía Gómez",
-        metodo_envio: "Cargo Express",
-        details: [
-          { name: "Mousepad RGB", quantity: 2, price: 30 },
-          { name: "Cable USB-C", quantity: 1, price: 40 },
-        ],
-      },
-      {
-        client: "Laura Gómez",
-        total: 200.0,
-        status: "En Producción",
-        date: "2025-04-03T16:30:00Z",
-        entrega: "2025-04-10",
-        usuario: "Carlos Ramírez",
-        metodo_envio: "N/A",
-        details: [{ name: "Teclado Mecánico", quantity: 1, price: 200 }],
-      },
-    ];
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-    const generated = [];
-    for (let i = 0; i < 25; i++) {
-      const base = baseOrders[i % baseOrders.length];
-      generated.push({
-        ...base,
-        id: i + 1,
-        client: `${base.client} ${i + 1}`,
-        date: new Date(2025, 3, 1 + (i % 10)).toISOString(),
-        entrega: new Date(2025, 3, 8 + (i % 10)).toISOString(),
-      });
-    }
+        // Fetch stages/statuses
+        const stagesResponse = await stagesController.getAllStages();
+        if (!stagesResponse.success) {
+          throw new Error(stagesResponse.message);
+        }
+        const statusesData = stagesResponse.data.map((status) => status.nombre);
+        setStatuses(statusesData);
 
-    setOrders(generated);
-  }, []);
+        // Fetch orders
+        const ordersResponse = await orderController.getAllOrders(
+          statusFilter !== "todos" ? statusFilter : null,
+          search || null,
+          null
+        );
+
+        // console.log(ordersResponse);
+
+        if (!ordersResponse.success) {
+          throw new Error(ordersResponse.message);
+        }
+
+        const formattedOrders = ordersResponse.data.map((order) => ({
+          id: order.pedido_id,
+          client: order.cliente,
+          status: order.estado,
+          total: parseFloat(order.total) || 0,
+          date: order.fecha_creacion,
+          entrega: order.fecha_estimada_entrega,
+          usuario: order.usuario || "",
+          metodo_envio: order.metodo_envio || "N/A",
+          details: order.detalles || [], // This may need a different format based on your API
+        }));
+
+        setOrders(formattedOrders);
+      } catch (err) {
+        setError(err.message);
+        showToast("Error al cargar datos: " + err.message, "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [statusFilter, search]); // React to changes in filters
 
   const showToast = (text, tipo = "exito") => {
     setToastMessage(text);
@@ -85,20 +90,39 @@ export default function Orders() {
     }, 3000);
   };
 
-  const handleCreateOrder = (newOrder) => {
-    showToast("Pedido guardado exitosamente", "exito");
-    setShowModal(false);
+  const handleCreateOrder = async (newOrder) => {
+    try {
+      // Here you would add code to save the newOrder to API
+      // For now we'll just show success and refresh orders
+      showToast("Pedido guardado exitosamente", "exito");
+      setShowModal(false);
+
+      // Refresh orders
+      const ordersResponse = await orderController.getAllOrders(
+        statusFilter !== "todos" ? statusFilter : null,
+        search || null,
+        null
+      );
+      if (ordersResponse.success) {
+        const formattedOrders = ordersResponse.data.map((order) => ({
+          id: order.pedido_id,
+          client: order.cliente,
+          status: order.estado,
+          total: parseFloat(order.total) || 0,
+          date: order.fecha_creacion,
+          entrega: order.fecha_estimada_entrega,
+          usuario: order.usuario || "",
+          metodo_envio: order.metodo_envio || "N/A",
+          details: order.detalles || [],
+        }));
+        setOrders(formattedOrders);
+      }
+    } catch (error) {
+      showToast("Error al guardar el pedido", error);
+    }
   };
 
-  const filteredOrders = orders.filter((order) => {
-    const matchesSearch =
-      order.client.toLowerCase().includes(search.toLowerCase()) ||
-      order.id.toString().includes(search);
-    const matchesStatus =
-      statusFilter === "todos" || order.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
+  const filteredOrders = orders;
   const totalPages = Math.ceil(filteredOrders.length / recordsPerPage);
   const startIndex = (currentPage - 1) * recordsPerPage;
   const endIndex = startIndex + recordsPerPage;
@@ -129,8 +153,6 @@ export default function Orders() {
 
   const isValidTransition = (from, to) => {
     if (from === to) return true;
-    // if (from === "Creado" && to === "En Producción") return true;
-    // if (from === "Creado" && to === "En Espera") return true;
     if (from === "En Producción" && to === "Listo") return true;
     if (from === "En Producción" && to === "En Espera") return true;
     if (from === "En Espera" && to === "En Producción") return true;
@@ -143,8 +165,10 @@ export default function Orders() {
   const openModal = (order) => {
     setSelectedOrder(order);
     setEditedStatus(order.status);
-    setEditedProducts(order.details.map((p) => ({ ...p })));
-    setEditedMetodoEnvio(order.metodo_envio);
+    setEditedProducts(
+      order.details ? order.details.map((p) => ({ ...p })) : []
+    );
+    setEditedMetodoEnvio(order.metodo_envio || "N/A");
   };
 
   const handleQuantityChange = (index, value) => {
@@ -157,13 +181,19 @@ export default function Orders() {
     setOrderToDelete(orders.find((order) => order.id === id));
   };
 
-  const confirmDelete = () => {
-    const updatedOrders = orders.filter(
-      (order) => order.id !== orderToDelete.id
-    );
-    setOrders(updatedOrders);
-    setOrderToDelete(null);
-    showToast("Pedido eliminado con éxito", "exito");
+  const confirmDelete = async () => {
+    try {
+      // Here you would add code to delete via API
+      // For now we'll just filter locally
+      const updatedOrders = orders.filter(
+        (order) => order.id !== orderToDelete.id
+      );
+      setOrders(updatedOrders);
+      setOrderToDelete(null);
+      showToast("Pedido eliminado con éxito", "exito");
+    } catch (error) {
+      showToast("Error al eliminar el pedido", error);
+    }
   };
 
   const cancelDelete = () => {
@@ -183,7 +213,7 @@ export default function Orders() {
     });
   };
 
-  const saveChanges = () => {
+  const saveChanges = async () => {
     // Validar cantidades vacías o inválidas
     if (
       editedProducts.some(
@@ -227,16 +257,44 @@ export default function Orders() {
       return;
     }
 
-    const updatedOrders = orders.map((o) =>
-      o.id === updatedOrder.id ? updatedOrder : o
-    );
+    try {
+      // Here you would add code to update the order via API
+      // For now we'll just update locally
+      const updatedOrders = orders.map((o) =>
+        o.id === updatedOrder.id ? updatedOrder : o
+      );
 
-    setOrders(updatedOrders);
-    showToast("Pedido actualizado con éxito", "exito");
-    setTimeout(() => {
-      setSelectedOrder(null);
-    }, 300);
+      setOrders(updatedOrders);
+      showToast("Pedido actualizado con éxito", "exito");
+      setTimeout(() => {
+        setSelectedOrder(null);
+      }, 300);
+    } catch (error) {
+      showToast("Error al actualizar el pedido", error);
+    }
   };
+
+  if (loading && orders.length === 0) {
+    return (
+      <div className="loading-container">
+        <p>Cargando pedidos...</p>
+      </div>
+    );
+  }
+
+  if (error && orders.length === 0) {
+    return (
+      <div className="error-container">
+        <p>Error: {error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="retry-button"
+        >
+          Reintentar
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="orders-container">
@@ -288,43 +346,50 @@ export default function Orders() {
               <th>Creación</th>
               <th>Entrega</th>
               <th>Acciones</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
-            {paginatedOrders.map((order) => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>{order.client}</td>
-                <td>{order.status}</td>
-                <td>Lps. {order.total.toFixed(2)}</td>
-                <td>{new Date(order.date).toLocaleDateString()}</td>
-                <td>{new Date(order.entrega).toLocaleDateString()}</td>
-                <td className="acciones-cell">
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-around",
-                      width: "100%",
-                    }}
-                  >
-                    <button
-                      className="ver-button"
-                      onClick={() => openModal(order)}
+            {paginatedOrders.length > 0 ? (
+              paginatedOrders.map((order) => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{order.client}</td>
+                  <td>{order.status}</td>
+                  <td>Lps. {order.total.toFixed(2)}</td>
+                  <td>{new Date(order.date).toLocaleDateString()}</td>
+                  <td>{new Date(order.entrega).toLocaleDateString()}</td>
+                  <td className="acciones-cell">
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        width: "100%",
+                      }}
                     >
-                      Ver Detalles
-                    </button>
-                    <button
-                      className="delete-button"
-                      onClick={() => handleDeleteOrder(order.id)}
-                      title="Eliminar Pedido"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </div>
+                      <button
+                        className="ver-button"
+                        onClick={() => openModal(order)}
+                      >
+                        Ver Detalles
+                      </button>
+                      <button
+                        className="delete-button"
+                        onClick={() => handleDeleteOrder(order.id)}
+                        title="Eliminar Pedido"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="no-data">
+                  No se encontraron pedidos
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

@@ -7,9 +7,9 @@ export const reportService = {
     });
   },
 
-  getIncomeByMonth: async (startDate, endDate, offset, limit) => {
+  getIncomeByMonth: async (startDate, endDate) => {
     return await apiClient.get("/reportes/income-by-month", {
-      params: { startDate, endDate, offset, limit },
+      params: { startDate, endDate },
     });
   },
 

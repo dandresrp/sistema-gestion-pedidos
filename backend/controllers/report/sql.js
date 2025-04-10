@@ -25,44 +25,29 @@ export const SQL_GET_ORDERS_BY_MONTH = `
 `;
 
 export const SQL_GET_INCOME_BY_MONTH = `
-  WITH ingresos_por_semana AS (SELECT CASE
-                                          WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 1 AND 7 THEN 'Día (1-7)'
-                                          WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 8 AND 14 THEN 'Día (8-14)'
-                                          WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 15 AND 21 THEN 'Día (15-21)'
-                                          WHEN EXTRACT(DAY FROM fecha_finalizacion) >= 22 THEN 'Día (22-fin)'
-                                          END                              AS semana,
-                                      TO_CHAR(fecha_finalizacion, 'Month') AS mes,
-                                      SUM(total)                           AS ingresos
-                              FROM public.pedidos
-                              WHERE estado_id = 5
-                                AND fecha_finalizacion >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '2 months'
-                              GROUP BY semana, mes),
-      ingresos_totales AS (SELECT 'Total'                              AS semana,
-                                  TO_CHAR(fecha_finalizacion, 'Month') AS mes,
-                                  SUM(total)                           AS ingresos
-                            FROM public.pedidos
-                            WHERE estado_id = 5
-                              AND fecha_finalizacion >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '2 months'
-                            GROUP BY mes)
-  SELECT semana,
-        COALESCE(SUM(CASE WHEN mes = TO_CHAR(CURRENT_DATE, 'Month') THEN ingresos END), 0)                       AS mes_actual,
-        COALESCE(SUM(CASE WHEN mes = TO_CHAR(CURRENT_DATE - INTERVAL '1 month', 'Month') THEN ingresos END),
-                  0)                                                                                              AS mes_pasado,
-        COALESCE(SUM(CASE WHEN mes = TO_CHAR(CURRENT_DATE - INTERVAL '2 months', 'Month') THEN ingresos END),
-                  0)                                                                                              AS mes_antepasado
-  FROM (SELECT *
-        FROM ingresos_por_semana
-        UNION ALL
-        SELECT *
-        FROM ingresos_totales) ingresos
-  GROUP BY semana
-  ORDER BY CASE
-              WHEN semana = 'Día (1-7)' THEN 1
-              WHEN semana = 'Día (8-14)' THEN 2
-              WHEN semana = 'Día (15-21)' THEN 3
-              WHEN semana = 'Día (22-fin)' THEN 4
-              WHEN semana = 'Total' THEN 5
-              END;
+  WITH weekly_income AS (
+    SELECT
+      DATE_TRUNC('month', fecha_finalizacion)::timestamp AS month,
+      SUM(CASE WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 1 AND 7 THEN total ELSE 0 END) AS first_week,
+      SUM(CASE WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 8 AND 14 THEN total ELSE 0 END) AS second_week,
+      SUM(CASE WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 15 AND 21 THEN total ELSE 0 END) AS third_week,
+      SUM(CASE WHEN EXTRACT(DAY FROM fecha_finalizacion) >= 22 THEN total ELSE 0 END) AS fourth_week,
+      SUM(total) AS total
+    FROM public.pedidos
+    WHERE estado_id = 5
+    AND ($1::DATE IS NULL OR fecha_finalizacion >= $1::DATE)
+    AND ($2::DATE IS NULL OR fecha_finalizacion <= $2::DATE)
+    GROUP BY DATE_TRUNC('month', fecha_finalizacion)
+  )
+  SELECT
+    month,
+    first_week,
+    second_week,
+    third_week,
+    fourth_week,
+    total
+  FROM weekly_income
+  ORDER BY month ASC;
 `;
 
 export const SQL_GET_PENDING_ORDERS = `
@@ -116,6 +101,7 @@ export const SQL_GET_REJECTED_ORDERS = `
 
 export const SQL_GET_ORDERS_OUT_OF_TIME = `
   SELECT p.fecha_estimada_entrega,
+        p.hora_estimada_entrega,
         c.nombre                                                                               AS cliente,
         STRING_AGG(CONCAT(pr.nombre, ' (', dp.cantidad, ')'), ', ')                            AS productos,
         SUM(dp.cantidad)                                                                       AS cantidad,
@@ -134,62 +120,44 @@ export const SQL_GET_ORDERS_OUT_OF_TIME = `
 `;
 
 export const SQL_GET_BEST_SELLING_PRODUCTS_HISTORY = `
-  WITH ventas_totales AS (SELECT dp.producto_id,
-                                SUM(dp.cantidad) AS total_vendido
-                          FROM public.detalle_pedido dp
-                                  JOIN
-                              public.pedidos p ON dp.pedido_id = p.pedido_id
-                                  JOIN public.estados e ON p.estado_id = e.estado_id
-                          WHERE p.fecha_finalizacion IS NOT NULL
-                            AND e.estado_id = 5
-                            AND (
-                              CASE
-                                  WHEN $1::DATE IS NOT NULL AND $2::DATE IS NOT NULL THEN
-                                      p.fecha_finalizacion BETWEEN $1::DATE AND $2::DATE
-                                  WHEN $1::DATE IS NOT NULL THEN
-                                      p.fecha_finalizacion >= $1::DATE
-                                  WHEN $2::DATE IS NOT NULL THEN
-                                      p.fecha_finalizacion <= $2::DATE
-                                  ELSE TRUE
-                                  END
-                              )
-                          GROUP BY dp.producto_id),
-      total_general AS (SELECT COALESCE(SUM(total_vendido), 0) AS suma_total
-                        FROM ventas_totales),
-      productos_ordenados AS (SELECT p.nombre AS producto,
-                                      vt.total_vendido,
-                                      CASE
-                                          WHEN (SELECT suma_total FROM total_general) > 0
-                                              THEN vt.total_vendido * 100.0 / (SELECT suma_total FROM total_general)
-                                          ELSE 0
-                                          END  AS porcentaje
-                              FROM ventas_totales vt
-                                        JOIN
-                                    public.productos p ON vt.producto_id = p.producto_id
-                              ORDER BY vt.total_vendido DESC),
-      top_productos AS (SELECT producto,
-                                total_vendido,
-                                porcentaje
-                        FROM productos_ordenados
-                        LIMIT 4),
-      otros AS (SELECT 'Otros'                         AS producto,
-                        COALESCE(SUM(total_vendido), 0) AS total_vendido,
-                        COALESCE(SUM(porcentaje), 0)    AS porcentaje
-                FROM productos_ordenados
-                WHERE producto NOT IN (SELECT producto FROM top_productos)
-                  AND (SELECT COUNT(*) FROM top_productos) > 0)
-  SELECT producto,
-        total_vendido,
-        ROUND(porcentaje, 2) AS porcentaje
-  FROM top_productos
-
-  UNION ALL
-
-  SELECT producto,
-        total_vendido,
-        ROUND(porcentaje, 2) AS porcentaje
-  FROM otros
-  WHERE (SELECT COUNT(*) FROM productos_ordenados) > 4;
+  WITH RankedProducts AS (
+    SELECT
+      v.sku,
+      pr.nombre,
+      CASE
+        WHEN POSITION(' ' IN pr.nombre) > 0 THEN SUBSTRING(pr.nombre, 1, POSITION(' ' IN pr.nombre) - 1)
+        ELSE pr.nombre
+        END AS categoria,
+      COUNT(*) AS cantidad_vendida,
+      (
+        SELECT STRING_AGG(esp.nombre || ': ' || val.valor, ', ' ORDER BY esp.especificacion_id)
+        FROM public.variante_valores vv
+            JOIN public.valor val ON vv.valor_id = val.valor_id
+            JOIN public.especificacion esp ON val.especificacion_id = esp.especificacion_id
+        WHERE vv.variante_id = v.variante_id
+      ) AS especificaciones,
+      ROW_NUMBER() OVER (
+        PARTITION BY CASE
+                WHEN POSITION(' ' IN pr.nombre) > 0 THEN SUBSTRING(pr.nombre, 1, POSITION(' ' IN pr.nombre) - 1)
+                ELSE pr.nombre
+          END
+        ORDER BY COUNT(*) DESC
+        ) AS rank_in_category
+    FROM pedidos p
+        JOIN detalle_pedido d ON p.pedido_id = d.pedido_id
+        JOIN productos pr ON d.producto_id = pr.producto_id
+        JOIN producto_especificaciones pe ON pr.producto_id = pe.producto_id
+        JOIN variantes v ON pr.producto_id = v.producto_id AND d.producto_id = v.producto_id
+    WHERE p.estado_id = 5
+      AND ($1::DATE IS NULL OR p.fecha_creacion >= $1::DATE)
+      AND ($2::DATE IS NULL OR p.fecha_creacion <= $2::DATE)
+    GROUP BY v.sku, pr.nombre, v.variante_id
+  )
+  SELECT sku, nombre AS producto, cantidad_vendida AS total_vendido, especificaciones
+  FROM RankedProducts
+  WHERE rank_in_category = 1
+  ORDER BY cantidad_vendida DESC
+  LIMIT 10;
 `;
 
 export const SQL_GET_INVENTORY = `
@@ -215,22 +183,86 @@ export const SQL_GET_INVENTORY = `
 `;
 
 export const SQL_GET_PRODUCTION_CAPACITY = `
-  WITH pedidos_por_mes AS (SELECT DATE_TRUNC('month', fecha_finalizacion) AS mes,
-                                  COUNT(*)                                AS pedidos_finalizados
-                          FROM public.pedidos
-                          WHERE estado_id = 5
-                            AND ($1::DATE IS NULL OR fecha_finalizacion >= $1::DATE)
-                            AND ($2::DATE IS NULL OR fecha_finalizacion <= $2::DATE)
-                          GROUP BY DATE_TRUNC('month', fecha_finalizacion)),
-      meses_ordenados AS (SELECT mes,
-                                  pedidos_finalizados,
-                                  LAG(pedidos_finalizados) OVER (ORDER BY mes) AS pedidos_mes_anterior
-                          FROM pedidos_por_mes)
-  SELECT DATE_TRUNC('month', mes)::timestamp AS mes,
-        pedidos_finalizados                                                                     AS pedidos_mes_actual,
-        pedidos_mes_anterior                                                                    AS pedidos_mes_anterior,
-        ROUND(((pedidos_finalizados - pedidos_mes_anterior) * 100.0) / pedidos_mes_anterior, 2) AS porcentaje_variacion
+  WITH fecha_filtro AS (SELECT $1::DATE AS fecha_inicio,
+                              $2::DATE AS fecha_fin),
+      fecha_extendida AS (SELECT CASE
+                                      WHEN (SELECT fecha_inicio FROM fecha_filtro) IS NULL
+                                          THEN DATE_TRUNC('month', CURRENT_DATE - INTERVAL '3 month')
+                                      ELSE DATE_TRUNC('month', (SELECT fecha_inicio FROM fecha_filtro)) -
+                                          INTERVAL '1 month'
+                                      END AS fecha_inicio_extendida,
+                                  CASE
+                                      WHEN (SELECT fecha_fin FROM fecha_filtro) IS NULL THEN CURRENT_DATE
+                                      ELSE (SELECT fecha_fin FROM fecha_filtro)
+                                      END AS fecha_fin_extendida),
+      pedidos_datos AS (SELECT DATE_TRUNC('month', fecha_creacion)     AS mes_creacion,
+                                DATE_TRUNC('month', fecha_finalizacion) AS mes_finalizacion,
+                                fecha_creacion,
+                                fecha_finalizacion,
+                                estado_id
+                        FROM public.pedidos
+                        WHERE (fecha_finalizacion >= (SELECT fecha_inicio_extendida FROM fecha_extendida) OR
+                                fecha_finalizacion IS NULL)
+                          AND (fecha_finalizacion <= (SELECT fecha_fin_extendida FROM fecha_extendida) OR
+                                fecha_finalizacion IS NULL)),
+      metricas_mensuales AS (SELECT mes_finalizacion                                                      AS mes,
+                                    COUNT(*) FILTER (WHERE estado_id = 5)                                 AS pedidos_finalizados,
+                                    AVG(EXTRACT(EPOCH FROM (fecha_finalizacion - fecha_creacion)) / 3600)
+                                    FILTER (WHERE estado_id = 5)                                          AS tiempo_promedio_horas,
+                                    CASE
+                                        WHEN COUNT(*) > 0 THEN
+                                            (COUNT(*) FILTER (WHERE estado_id = 5) * 100.0) / COUNT(*)
+                                        ELSE 0
+                                        END                                                               AS tasa_cumplimiento,
+                                    COUNT(DISTINCT fecha_finalizacion::DATE) FILTER (WHERE estado_id = 5) AS dias_laborales,
+                                    CASE
+                                        WHEN COUNT(DISTINCT fecha_finalizacion::DATE) FILTER (WHERE estado_id = 5) > 0
+                                            THEN
+                                                    COUNT(*) FILTER (WHERE estado_id = 5) /
+                                                    COUNT(DISTINCT fecha_finalizacion::DATE) FILTER (WHERE estado_id = 5)::FLOAT
+                                        ELSE 0
+                                        END                                                               AS productividad_diaria
+                              FROM pedidos_datos
+                              WHERE mes_finalizacion IS NOT NULL
+                              GROUP BY mes_finalizacion),
+      backlog_mensual AS (SELECT DATE_TRUNC('month', fecha_actual)::TIMESTAMP AS mes,
+                                  COUNT(*) FILTER (WHERE estado_id != 5)       AS pedidos_pendientes
+                          FROM (SELECT DISTINCT DATE_TRUNC('month', dd)::TIMESTAMP AS fecha_actual,
+                                                p.estado_id
+                                FROM GENERATE_SERIES(
+                                              (SELECT fecha_inicio_extendida FROM fecha_extendida),
+                                              (SELECT COALESCE(MAX(fecha_finalizacion), CURRENT_DATE) FROM pedidos_datos),
+                                              '1 month'
+                                      ) AS dd
+                                          CROSS JOIN pedidos_datos p
+                                WHERE p.fecha_creacion <= dd
+                                  AND (p.fecha_finalizacion > dd OR p.fecha_finalizacion IS NULL)) AS backlog
+                          GROUP BY fecha_actual),
+      meses_ordenados AS (SELECT m.mes,
+                                  m.pedidos_finalizados,
+                                  LAG(m.pedidos_finalizados) OVER (ORDER BY m.mes) AS pedidos_mes_anterior,
+                                  m.tiempo_promedio_horas,
+                                  m.tasa_cumplimiento,
+                                  m.dias_laborales,
+                                  m.productividad_diaria,
+                                  COALESCE(b.pedidos_pendientes, 0)                AS pedidos_pendientes
+                          FROM metricas_mensuales m
+                                    LEFT JOIN backlog_mensual b ON m.mes = b.mes)
+  SELECT mes,
+        pedidos_finalizados                   AS pedidos_mes_actual,
+        pedidos_mes_anterior,
+        CASE
+            WHEN pedidos_mes_anterior > 0 THEN
+                ((pedidos_finalizados - pedidos_mes_anterior) * 100.0 / pedidos_mes_anterior)::NUMERIC(10, 2)
+            END                               AS porcentaje_variacion,
+        tiempo_promedio_horas::NUMERIC(10, 2) AS tiempo_promedio_finalizacion_horas,
+        tasa_cumplimiento::NUMERIC(10, 2)     AS porcentaje_cumplimiento,
+        dias_laborales,
+        productividad_diaria::NUMERIC(10, 2)  AS productividad_por_dia,
+        pedidos_pendientes                    AS backlog_fin_mes
   FROM meses_ordenados
-  WHERE pedidos_mes_anterior IS NOT NULL
+  WHERE mes IS NOT NULL
+    AND (($1::DATE IS NULL) OR mes >= DATE_TRUNC('month', $1::DATE))
+    AND (($2::DATE IS NULL) OR mes <= DATE_TRUNC('month', $2::DATE))
   ORDER BY mes;
 `;

@@ -248,8 +248,8 @@ const Reports = () => {
             case "monthly-income": {
               type = "line";
               const res = await reportController.getIncomeByMonth(
-                startDate.toISOString().split("T")[0],
-                endDate.toISOString().split("T")[0]
+                adjustedStart.toISOString().split("T")[0],
+                adjustedEnd.toISOString().split("T")[0]
               );
               if (!res.success) throw new Error(res.message);
 
