@@ -46,10 +46,22 @@ const getMonthYear = (date) => {
   return `${mes.toUpperCase()} DE ${año}`;
 };
 
+const getFormattedDateLong = (date) => {
+  return date.toLocaleDateString("es-ES", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 const getDynamicTitle = (reportName, endDate) => {
   if (reportName === "completed-orders") {
     return `PEDIDOS REALIZADOS EN ${getMonthYear(endDate)}`;
   }
+  if (reportName === "inventory") {
+    return `INVENTARIO AL ${getFormattedDateLong(endDate).toUpperCase()}`;
+  }
+
   return ReportTitles[reportName] || "REPORTE";
 };
 
@@ -291,7 +303,7 @@ const Reports = () => {
             }
 
             case "production-capacity": {
-              type = "bar-line";
+              type = "line2";
               const res = await reportController.getProductionCapacity();
               if (!res.success) throw new Error(res.message);
 
@@ -303,8 +315,7 @@ const Reports = () => {
               }));
 
               setChartData(capacityData);
-              setBarKey(["pedidosEsteMes", "pedidosMesAnterior"]);
-              setLineKey("variacionUtilizacion");
+              setLines(["variacionUtilizacion"]);
               setType(type);
               data = { tableData: capacityData };
               break;
@@ -435,13 +446,13 @@ const Reports = () => {
             />
           }
         >
-          {["line", "bar-line", "pie"].includes(type) && (
+          {["line", "line2", "pie"].includes(type) && (
             <TableComponent data={reportData} columns={ReportsColumns} />
           )}
           <ChartComponent
             type={type}
             data={chartData}
-            dataKey={type === "bar-line" ? "pedidosEsteMes" : "cantidadVendida"}
+            dataKey={type === "line2" ? "pedidosEsteMes" : "cantidadVendida"}
             barKey={barKey}
             lineKey={lineKey}
             lines={lines}

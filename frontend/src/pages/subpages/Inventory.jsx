@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-// import { reportController } from "../../controllers/reportController";
+import { reportController } from "../../controllers/reportController";
 import "../../styles/Inventory.css";
-import ProductCard from "../../components/ProductCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import prodImg from "../../assets/prod_258_popup.jpg";
@@ -78,59 +77,67 @@ export default function Inventory() {
   };
 
   useEffect(() => {
-    // const fetchInventory = async () => {
-    //   try {
-    //     setLoading(true);
-    //     const res = await reportController.getInventory();
-    //     if (!res.success) throw new Error(res.message);
-    //     const data = res.data.map((item) => {
-    //       let imagenFinal =
-    //         item.imagen_url && item.imagen_url.trim() !== ""
-    //           ? item.imagen_url
-    //           : prodImg;
-    //       if (item.nombre_producto === "Mouspad") {
-    //         imagenFinal = Mousepad;
-    //       }
-    //       return {
-    //         id: item.id,
-    //         nombre: item.nombre_producto,
-    //         stock: item.stock_disponible,
-    //         imagen: imagenFinal,
-    //       };
-    //     });
-    //     setProducts(data);
-    //   } catch (err) {
-    //     setError("No se pudo cargar el inventario: " + err.message);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-    // fetchInventory();
+    const fetchInventory = async () => {
+      try {
+        setLoading(true);
+        const res = await reportController.getInventory();
+        if (!res.success) throw new Error(res.message);
 
-    const mockData = [
-      {
-        id: 1,
-        nombre: "Mousepad Gamer XL",
-        stock: 10,
-        imagen: Mousepad,
-      },
-      {
-        id: 2,
-        nombre: "Teclado Mecánico RGB",
-        stock: 4,
-        imagen: prodImg,
-      },
-      {
-        id: 3,
-        nombre: "Monitor 24'' Full HD",
-        stock: 7,
-        imagen: prodImg,
-      },
-    ];
+        const data = res.data.map((item) => {
+          let imagenFinal =
+            item.imagen_url && item.imagen_url.trim() !== ""
+              ? item.imagen_url
+              : prodImg;
 
-    setProducts(mockData);
-    setLoading(false);
+          if (item.nombre_producto === "Mouspad") {
+            imagenFinal = Mousepad;
+          }
+
+          return {
+            id: item.id,
+            nombre: item.nombre_producto,
+            stock: item.stock_disponible,
+            precio: item.precio || null,
+            descripcion: item.descripcion || null,
+            imagen: imagenFinal,
+          };
+        });
+
+        setProducts(data);
+      } catch (err) {
+        setError("No se pudo cargar el inventario: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInventory();
   }, []);
+
+  //   const mockData = [
+  //     {
+  //       id: 1,
+  //       nombre: "Mousepad Gamer XL",
+  //       stock: 10,
+  //       imagen: Mousepad,
+  //     },
+  //     {
+  //       id: 2,
+  //       nombre: "Teclado Mecánico RGB",
+  //       stock: 4,
+  //       imagen: prodImg,
+  //     },
+  //     {
+  //       id: 3,
+  //       nombre: "Monitor 24'' Full HD",
+  //       stock: 7,
+  //       imagen: prodImg,
+  //     },
+  //   ];
+
+  //   setProducts(mockData);
+  //   setLoading(false);
+  // }, []);
 
   const handleSearchChange = (value) => {
     setSearch(value);
@@ -251,16 +258,38 @@ export default function Inventory() {
       ) : filteredProducts.length === 0 ? (
         <p className="info-text">No se encontraron productos.</p>
       ) : (
-        <div className="product-scroll-container">
-          <div className="product-grid">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onEdit={openEditModal}
-              />
-            ))}
-          </div>
+        <div className="inventory-table-container">
+          <table className="inventory-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Stock</th>
+                <th>Precio</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredProducts.map((product) => (
+                <tr key={product.id}>
+                  <td>{product.id}</td>
+                  <td>{product.nombre}</td>
+                  <td>{product.stock}</td>
+                  <td>{product.precio ? `Lps. ${product.precio}` : "—"}</td>
+                  <td>{product.descripcion || "—"}</td>
+                  <td>
+                    <button
+                      className="edit-button"
+                      onClick={() => openEditModal(product)}
+                    >
+                      Editar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 

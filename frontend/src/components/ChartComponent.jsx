@@ -18,7 +18,11 @@ import "../styles/ChartComponent.css";
 
 const COLORS = ["#173154", "#2B558C", "#2e63ab", "#4E6AA8", "#6181AFFF"];
 
-const ReportChart = ({ type, data, dataKey, lines, barKey, lineKey }) => {
+const LINE_LABELS = {
+  variacionUtilizacion: "% Variación de Utilización",
+};
+
+const ReportChart = ({ type, data, dataKey, lines }) => {
   return (
     <div className="chart-container">
       {type === "pie" ? (
@@ -64,32 +68,25 @@ const ReportChart = ({ type, data, dataKey, lines, barKey, lineKey }) => {
             ))}
           </LineChart>
         </ResponsiveContainer>
-      ) : type === "bar-line" ? (
+      ) : type === "line2" ? (
         <ResponsiveContainer>
-          <ComposedChart data={data}>
+          <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <YAxis yAxisId="left" />
-            <YAxis yAxisId="right" orientation="right" />
+            <XAxis dataKey="name" />
+            <YAxis />
             <Tooltip />
             <Legend />
-            {barKey.map((key, index) => (
-              <Bar
+            {lines.map((key, index) => (
+              <Line
                 key={index}
-                yAxisId="left"
+                type="monotone"
                 dataKey={key}
-                name={index == 0 ? "Pedidos Este Mes" : "Pedidos Mes Anterior"}
-                fill={COLORS[index % COLORS.length]}
+                stroke={COLORS[index % COLORS.length]}
+                strokeWidth={2}
+                name={LINE_LABELS[key] || key}
               />
             ))}
-            <Line
-              yAxisId="right"
-              type="monotone"
-              dataKey={lineKey}
-              name="% Variación de Utilización"
-              stroke="#000"
-              strokeWidth={2}
-            />
-          </ComposedChart>
+          </LineChart>
         </ResponsiveContainer>
       ) : null}
     </div>

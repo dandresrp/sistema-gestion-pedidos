@@ -76,7 +76,7 @@
   padding: 0.5rem 0;
 }
 
-.delete-button {
+.delete1-button {
   all: unset;
   background-color: #f44336;
   color: white;
@@ -86,7 +86,7 @@
   cursor: pointer;
 }
 
-.delete-button:hover {
+.delete1-button:hover {
   background-color: #cc6060;
   color: white;
 }
@@ -145,11 +145,12 @@
   padding-right: 40px;
 }
 
-.password-icon {
+.pass-icon {
   position: absolute;
   right: 10px;
   cursor: pointer;
-  color: #666;
+  color: #8e98a8;
+  margin-top: 0;
 }
 
 .form-actions {

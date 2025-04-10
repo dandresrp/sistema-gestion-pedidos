@@ -240,7 +240,6 @@ const DetailedReports = ({
         </div>
       )}
 
-      {/* Aquí agregamos el Footer */}
       <Footer />
     </div>
   );

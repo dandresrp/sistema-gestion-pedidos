@@ -187,7 +187,7 @@ export function ManageUsersModal({ onClose }) {
                       </div>
                       <button
                         onClick={() => handleDeleteUser(user)}
-                        className="delete-button"
+                        className="delete1-button"
                         disabled={loading}
                       >
                         Eliminar
@@ -234,7 +234,7 @@ export function ManageUsersModal({ onClose }) {
                   />
                   <FontAwesomeIcon
                     icon={showPassword ? faEyeSlash : faEye}
-                    className="password-icon"
+                    className="pass-icon"
                     onClick={() => setShowPassword(!showPassword)}
                   />
                 </div>
@@ -484,7 +484,7 @@ export function ManageClientsModal({ onClose }) {
                       </div>
                       <button
                         onClick={() => handleDeleteClient(client)}
-                        className="delete-button"
+                        className="delete1-button"
                         disabled={loading}
                       >
                         Eliminar
