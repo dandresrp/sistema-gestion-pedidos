@@ -266,14 +266,14 @@ const Reports = () => {
 
               const productData = res.data.map((item) => ({
                 producto: item.producto,
-                cantidadVendida: parseInt(item.total_vendido),
+                cantidad: parseInt(item.total_vendido),
                 porcentaje: parseFloat(item.porcentaje),
               }));
 
               setChartData(
                 productData.map((item) => ({
                   name: item.producto,
-                  cantidadVendida: item.cantidadVendida,
+                  cantidadVendida: item.cantidad,
                 }))
               );
               setType(type);

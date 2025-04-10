@@ -269,7 +269,9 @@ export const fetchTopProductosVendidos = async () => {
       resolve({
         tableData: fakeData,
         chartData,
-        labels: fakeData.map((row) => row.producto), // Etiquetas del eje X
+        labels: fakeData.map((row) => {
+          row.producto, row.cantidadVendida;
+        }), // Etiquetas del eje X
         fechaReporte: new Date().toISOString().split("T")[0],
       });
     }, 1000); // Simula 1s de espera
