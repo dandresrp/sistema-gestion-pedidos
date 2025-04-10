@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { reportController } from "../../controllers/reportController";
+// import { reportController } from "../../controllers/reportController";
 import "../../styles/Inventory.css";
+import ProductCard from "../../components/ProductCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import prodImg from "../../assets/prod_258_popup.jpg";
-import Mousepad from "../../assets/mousepad.jpg";
+import Llavero from "../../assets/llavero.jpeg";
+import Gorra from "../../assets/products_sublimacion_gorra_01.jpg";
+import Taza from "../../assets/TS-01.jpg";
+import Termo from "../../assets/0008202_38536-termo-moka-marcado-serigrafia_550.jpg";
 
 export default function Inventory() {
   const [search, setSearch] = useState("");
@@ -77,67 +81,125 @@ export default function Inventory() {
   };
 
   useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        setLoading(true);
-        const res = await reportController.getInventory();
-        if (!res.success) throw new Error(res.message);
+    // const fetchInventory = async () => {
+    //   try {
+    //     setLoading(true);
+    //     const res = await reportController.getInventory();
+    //     if (!res.success) throw new Error(res.message);
+    //     const data = res.data.map((item) => {
+    //       let imagenFinal =
+    //         item.imagen_url && item.imagen_url.trim() !== ""
+    //           ? item.imagen_url
+    //           : prodImg;
+    //       if (item.nombre_producto === "Mouspad") {
+    //         imagenFinal = prodImg,;
+    //       }
+    //       return {
+    //         id: item.id,
+    //         nombre: item.nombre_producto,
+    //         stock: item.stock_disponible,
+    //         imagen: imagenFinal,
+    //       };
+    //     });
+    //     setProducts(data);
+    //   } catch (err) {
+    //     setError("No se pudo cargar el inventario: " + err.message);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+    // fetchInventory();
 
-        const data = res.data.map((item) => {
-          let imagenFinal =
-            item.imagen_url && item.imagen_url.trim() !== ""
-              ? item.imagen_url
-              : prodImg;
+    const mockData = [
+      {
+        id: 1,
+        nombre: "Camisa XL",
+        stock: 10,
+        imagen: prodImg,
+      },
+      {
+        id: 1,
+        nombre: "Camisa L",
+        stock: 15,
+        imagen: prodImg,
+      },
+      {
+        id: 1,
+        nombre: "Camisa S",
+        stock: 12,
+        imagen: prodImg,
+      },
+      {
+        id: 1,
+        nombre: "Camisa M",
+        stock: 8,
+        imagen: prodImg,
+      },
+      {
+        id: 2,
+        nombre: "Gorra S Negra",
+        stock: 4,
+        imagen: Gorra,
+      },
+      {
+        id: 2,
+        nombre: "Gorra M Blanca",
+        stock: 9,
+        imagen: Gorra,
+      },
+      {
+        id: 2,
+        nombre: "Gorra L Verde",
+        stock: 7,
+        imagen: Gorra,
+      },
+      {
+        id: 2,
+        nombre: "Gorra XL Azul",
+        stock: 3,
+        imagen: Gorra,
+      },
+      {
+        id: 3,
+        nombre: "Llavero Rectangular",
+        stock: 11,
+        imagen: Llavero,
+      },
+      {
+        id: 3,
+        nombre: "Llavero Circular",
+        stock: 5,
+        imagen: Llavero,
+      },
+      {
+        id: 3,
+        nombre: "Termo Plástico",
+        stock: 10,
+        imagen: Termo,
+      },
+      {
+        id: 3,
+        nombre: "Termo Aluminio",
+        stock: 7,
+        imagen: Termo,
+      },
+      {
+        id: 3,
+        nombre: "Taza Mágica",
+        stock: 12,
+        imagen: Taza,
+      },
+      {
+        id: 3,
+        nombre: "Taza",
+        stock: 9,
+        imagen: Taza,
+      },
+    ];
 
-          if (item.nombre_producto === "Mouspad") {
-            imagenFinal = Mousepad;
-          }
-
-          return {
-            id: item.id,
-            nombre: item.nombre_producto,
-            stock: item.stock_disponible,
-            precio: item.precio || null,
-            descripcion: item.descripcion || null,
-            imagen: imagenFinal,
-          };
-        });
-
-        setProducts(data);
-      } catch (err) {
-        setError("No se pudo cargar el inventario: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInventory();
+    setProducts(mockData);
+    setLoading(false);
   }, []);
-
-  //   const mockData = [
-  //     {
-  //       id: 1,
-  //       nombre: "Mousepad Gamer XL",
-  //       stock: 10,
-  //       imagen: Mousepad,
-  //     },
-  //     {
-  //       id: 2,
-  //       nombre: "Teclado Mecánico RGB",
-  //       stock: 4,
-  //       imagen: prodImg,
-  //     },
-  //     {
-  //       id: 3,
-  //       nombre: "Monitor 24'' Full HD",
-  //       stock: 7,
-  //       imagen: prodImg,
-  //     },
-  //   ];
-
-  //   setProducts(mockData);
-  //   setLoading(false);
-  // }, []);
 
   const handleSearchChange = (value) => {
     setSearch(value);
@@ -258,38 +320,16 @@ export default function Inventory() {
       ) : filteredProducts.length === 0 ? (
         <p className="info-text">No se encontraron productos.</p>
       ) : (
-        <div className="inventory-table-container">
-          <table className="inventory-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Stock</th>
-                <th>Precio</th>
-                <th>Descripción</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProducts.map((product) => (
-                <tr key={product.id}>
-                  <td>{product.id}</td>
-                  <td>{product.nombre}</td>
-                  <td>{product.stock}</td>
-                  <td>{product.precio ? `Lps. ${product.precio}` : "—"}</td>
-                  <td>{product.descripcion || "—"}</td>
-                  <td>
-                    <button
-                      className="edit-button"
-                      onClick={() => openEditModal(product)}
-                    >
-                      Editar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="product-scroll-container">
+          <div className="product-grid">
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onEdit={openEditModal}
+              />
+            ))}
+          </div>
         </div>
       )}
 
