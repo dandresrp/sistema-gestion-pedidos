@@ -54,19 +54,19 @@ router.get(
  *   get:
  *     summary: Obtener ingresos por mes
  *     tags: [Reportes]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         description: Fecha de inicio para filtrar ingresos ('2025-01-01')
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: endDate
+ *         description: Fecha final para filtrar ingresos ('2025-01-31')
+ *         schema:
+ *           type: string
  *     security:
  *       - bearerAuth: []
- *    parameters:
- *      - in: query
- *       name: startDate
- *       description: Fecha de inicio para filtrar ingresos ('2025-01-01')
- *      schema:
- *         type: string
- *      - in: query
- *       name: endDate
- *      description: Fecha final para filtrar ingresos ('2025-01-31')
- *      schema:
- *        type: string
  *     responses:
  *       200:
  *         description: Lista de ingresos filtrados por mes

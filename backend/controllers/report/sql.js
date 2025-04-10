@@ -25,52 +25,29 @@ export const SQL_GET_ORDERS_BY_MONTH = `
 `;
 
 export const SQL_GET_INCOME_BY_MONTH = `
-WITH ingresos_por_semana AS (
+  WITH weekly_income AS (
+    SELECT
+      DATE_TRUNC('month', fecha_finalizacion)::timestamp AS month,
+      SUM(CASE WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 1 AND 7 THEN total ELSE 0 END) AS first_week,
+      SUM(CASE WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 8 AND 14 THEN total ELSE 0 END) AS second_week,
+      SUM(CASE WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 15 AND 21 THEN total ELSE 0 END) AS third_week,
+      SUM(CASE WHEN EXTRACT(DAY FROM fecha_finalizacion) >= 22 THEN total ELSE 0 END) AS fourth_week,
+      SUM(total) AS total
+    FROM public.pedidos
+    WHERE estado_id = 5
+    AND ($1::DATE IS NULL OR fecha_finalizacion >= $1::DATE)
+    AND ($2::DATE IS NULL OR fecha_finalizacion <= $2::DATE)
+    GROUP BY DATE_TRUNC('month', fecha_finalizacion)
+  )
   SELECT
-    CASE
-      WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 1 AND 7 THEN 'Día (1-7)'
-      WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 8 AND 14 THEN 'Día (8-14)'
-      WHEN EXTRACT(DAY FROM fecha_finalizacion) BETWEEN 15 AND 21 THEN 'Día (15-21)'
-      WHEN EXTRACT(DAY FROM fecha_finalizacion) >= 22 THEN 'Día (22-fin)'
-    END AS semana,
-    DATE_TRUNC('month', fecha_finalizacion)::timestamp AS mes,
-    SUM(total) AS ingresos
-  FROM public.pedidos
-  WHERE estado_id = 5
-  AND ($1::DATE IS NULL OR fecha_finalizacion >= $1::DATE)
-  AND ($2::DATE IS NULL OR fecha_finalizacion <= $2::DATE)
-  GROUP BY semana, DATE_TRUNC('month', fecha_finalizacion)
-),
-ingresos_totales AS (
-  SELECT
-    'Total' AS semana,
-    DATE_TRUNC('month', fecha_finalizacion)::timestamp AS mes,
-    SUM(total) AS ingresos
-  FROM public.pedidos
-  WHERE estado_id = 5
-  AND ($1::DATE IS NULL OR fecha_finalizacion >= $1::DATE)
-  AND ($2::DATE IS NULL OR fecha_finalizacion <= $2::DATE)
-  GROUP BY DATE_TRUNC('month', fecha_finalizacion)
-)
-SELECT
-  semana,
-  array_agg(ARRAY[mes::text, ingresos::text] ORDER BY mes ASC) AS meses_ingresos
-FROM (
-  SELECT *
-  FROM ingresos_por_semana
-  UNION ALL
-  SELECT *
-  FROM ingresos_totales
-) ingresos
-GROUP BY semana
-ORDER BY
-  CASE
-    WHEN semana = 'Día (1-7)' THEN 1
-    WHEN semana = 'Día (8-14)' THEN 2
-    WHEN semana = 'Día (15-21)' THEN 3
-    WHEN semana = 'Día (22-fin)' THEN 4
-    WHEN semana = 'Total' THEN 5
-  END;
+    month,
+    first_week,
+    second_week,
+    third_week,
+    fourth_week,
+    total
+  FROM weekly_income
+  ORDER BY month ASC;
 `;
 
 export const SQL_GET_PENDING_ORDERS = `

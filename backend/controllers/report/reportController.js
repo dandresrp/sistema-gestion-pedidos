@@ -35,43 +35,33 @@ export const getIncomeByMonth = async (req, res) => {
       endDate || null,
     ]);
 
-    const processedData = result.rows.map(row => {
-      const processedRow = { ...row };
+    const resultFormatted = result.rows.map(row => {
+      const date = new Date(row.month);
 
-      if (Array.isArray(row.meses_ingresos)) {
-        processedRow.meses_ingresos = row.meses_ingresos.map(monthData => {
-          if (Array.isArray(monthData) && monthData.length >= 2) {
-            const dateStr = monthData[0];
-            const amount = monthData[1];
+      const monthNames = [
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre',
+      ];
 
-            // Format the date
-            const date = new Date(dateStr);
-            const monthNames = [
-              'Enero',
-              'Febrero',
-              'Marzo',
-              'Abril',
-              'Mayo',
-              'Junio',
-              'Julio',
-              'Agosto',
-              'Septiembre',
-              'Octubre',
-              'Noviembre',
-              'Diciembre',
-            ];
-            const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+      const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 
-            return [formattedDate, amount];
-          }
-          return monthData;
-        });
-      }
-
-      return processedRow;
+      return {
+        ...row,
+        month: formattedDate,
+      };
     });
 
-    res.success(processedData);
+    res.success(resultFormatted);
   } catch (error) {
     console.error('Error fetching income by month:', error);
     res.error('Error al obtener ingresos por mes');
