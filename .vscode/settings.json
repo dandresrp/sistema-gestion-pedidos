@@ -1,0 +1,8 @@
+{
+    "dart.flutterSdkPath": "/Users/dandresrp/.local/share/mise/installs/flutter/3.32.8-stable",
+    "java.jdt.ls.java.home": "/Users/dandresrp/.local/share/mise/installs/java/temurin-17.0.16+8",
+    "java.import.gradle.java.home": "/Users/dandresrp/.local/share/mise/installs/java/temurin-17.0.16+8",
+    "debug.javascript.defaultRuntimeExecutable": {
+        "pwa-node": "/Users/dandresrp/.local/share/mise/shims/node"
+    }
+}
